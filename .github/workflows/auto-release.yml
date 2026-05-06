@@ -22,7 +22,7 @@ jobs:
 
       - name: Extract version from PR title
         id: parse
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const title = context.payload.pull_request.title.trim();
