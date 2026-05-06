@@ -1,0 +1,101 @@
+name: Deploy to ECS Dev
+
+on:
+  push:
+    branches:
+      - develop
+
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCOUNT_ID: "AWS_ACCOUNT_ID" # set this to your AWS account ID
+      AWS_REGION: "AWS_REGION" # set this to your AWS region, e.g. us-east-1
+      PROJECT_NAME: "AWSPROJECT" # set this to your project name (e.g. myapp)
+      ENVIRONMENT: "dev"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/${{ env.PROJECT_NAME }}-${{ env.ENVIRONMENT }}-github-actions-role
+          aws-region: ${{ env.AWS_REGION }}
+          audience: sts.amazonaws.com
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+          REPOSITORY: ${{ env.PROJECT_NAME }}-${{ env.ENVIRONMENT }}-${{ env.PROJECT_NAME }}-api-ecr
+        run: |
+          docker build --target all-in-one \
+            -t $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG .
+
+          docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+      - name: Update ECS task definition
+        id: task-def
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+          REPOSITORY: ${{ env.PROJECT_NAME }}-${{ env.ENVIRONMENT }}-${{ env.PROJECT_NAME }}-api-ecr
+          TASK_DEFINITION: ${{ env.PROJECT_NAME }}-${{ env.ENVIRONMENT }}-${{ env.PROJECT_NAME }}-api
+        run: |
+          # Get current task definition, update image, and register new revision
+          NEW_TASK_DEF=$(aws ecs describe-task-definition \
+            --task-definition $TASK_DEFINITION \
+            --query 'taskDefinition' \
+            --output json | jq \
+              --arg IMAGE "$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG" \
+              '.containerDefinitions[0].image = $IMAGE |
+              del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)')
+
+          echo "$NEW_TASK_DEF" > new-task-def.json
+
+          # Register the new task definition
+          NEW_TASK_INFO=$(aws ecs register-task-definition \
+            --cli-input-json file://new-task-def.json \
+            --query 'taskDefinition.taskDefinitionArn' \
+            --output text)
+
+          echo "task-definition-arn=$NEW_TASK_INFO" >> $GITHUB_OUTPUT
+
+      - name: Deploy to ECS
+        env:
+          CLUSTER: ${{ env.PROJECT_NAME }}-${{ env.ENVIRONMENT }}-ecs-cluster
+          SERVICE: ${{ env.PROJECT_NAME }}-${{ env.ENVIRONMENT }}-${{ env.PROJECT_NAME }}-api-service
+        run: |
+          aws ecs update-service \
+            --cluster $CLUSTER \
+            --service $SERVICE \
+            --task-definition ${{ steps.task-def.outputs.task-definition-arn }} \
+            --force-new-deployment
+
+      - name: Deployment summary
+        env:
+          CLUSTER: ${{ env.PROJECT_NAME }}-${{ env.ENVIRONMENT }}-ecs-cluster
+          SERVICE: ${{ env.PROJECT_NAME }}-${{ env.ENVIRONMENT }}-${{ env.PROJECT_NAME }}-api-service
+          REPOSITORY: ${{ env.PROJECT_NAME }}-${{ env.ENVIRONMENT }}-${{ env.PROJECT_NAME }}-api-ecr
+        run: |
+          echo "### Deployment Summary :rocket:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: $ENVIRONMENT" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cluster**: $CLUSTER" >> $GITHUB_STEP_SUMMARY
+          echo "- **Service**: $SERVICE" >> $GITHUB_STEP_SUMMARY
+          echo "- **Task Definition**: ${{ steps.task-def.outputs.task-definition-arn }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: ${{ steps.login-ecr.outputs.registry }}/$REPOSITORY:${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Lightit\Shared\App\Exceptions\Http;
+
+/**
+ * An exception thrown whan a page is not found.
+ */
+class PageNotFoundException extends HttpException
+{
+    #[\Override]
+    protected int $status = 404;
+
+    #[\Override]
+    protected string $errorCode = 'page_not_found';
+}

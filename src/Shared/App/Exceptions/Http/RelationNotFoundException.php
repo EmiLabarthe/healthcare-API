@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Lightit\Shared\App\Exceptions\Http;
+
+class RelationNotFoundException extends HttpException
+{
+    /**
+     * An HTTP status code.
+     */
+    #[\Override]
+    protected int $status = 422;
+
+    /**
+     * An error code.
+     */
+    #[\Override]
+    protected string $errorCode = 'relation_not_found';
+}
