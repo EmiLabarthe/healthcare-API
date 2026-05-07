@@ -26,5 +26,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  */
 class ClinicDoctor extends Pivot
 {
+    #[\Override]
     public $incrementing = true;
 }

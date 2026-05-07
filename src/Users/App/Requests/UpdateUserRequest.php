@@ -30,7 +30,9 @@ class UpdateUserRequest extends FormRequest
                 'sometimes',
                 'max:100',
                 Email::default(),
-                Rule::unique(User::class, 'email')->ignore($this->route('user')?->id),
+                Rule::unique(User::class, 'email')->ignore(
+                    $this->route('user') instanceof User ? $this->route('user')->id : null
+                ),
             ],
             self::PASSWORD => [
                 'sometimes',

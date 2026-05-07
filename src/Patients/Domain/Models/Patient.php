@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Lightit\Patients\Domain\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -28,16 +27,15 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Patient extends Model
 {
-    use HasFactory;
-
+    #[\Override]
     protected $guarded = ['id'];
 
     /** @return Attribute<string, string> */
     protected function email(): Attribute
     {
         return Attribute::make(
-            get: static fn (mixed $value): string => strtolower((string) $value),
-            set: static fn (mixed $value): string => strtolower((string) $value),
+            get: static fn (mixed $value): string => strtolower(is_string($value) ? $value : ''),
+            set: static fn (mixed $value): string => strtolower(is_string($value) ? $value : ''),
         );
     }
 }

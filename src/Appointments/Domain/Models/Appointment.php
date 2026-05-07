@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Lightit\Appointments\Domain\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -49,9 +48,9 @@ use Lightit\Patients\Domain\Models\Patient;
  */
 class Appointment extends Model
 {
-    use HasFactory;
     use SoftDeletes;
 
+    #[\Override]
     protected $guarded = ['id'];
 
     /** @return array<string, string> */

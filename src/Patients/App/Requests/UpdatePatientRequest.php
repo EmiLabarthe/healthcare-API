@@ -27,7 +27,9 @@ class UpdatePatientRequest extends FormRequest
                 'sometimes',
                 'max:100',
                 Email::default(),
-                Rule::unique(Patient::class, 'email')->ignore($this->route('patient')?->id),
+                Rule::unique(Patient::class, 'email')->ignore(
+                    $this->route('patient') instanceof Patient ? $this->route('patient')->id : null
+                ),
             ],
         ];
     }

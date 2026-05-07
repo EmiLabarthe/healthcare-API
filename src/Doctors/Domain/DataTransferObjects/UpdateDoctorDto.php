@@ -7,7 +7,7 @@ namespace Lightit\Doctors\Domain\DataTransferObjects;
 readonly class UpdateDoctorDto
 {
     public function __construct(
-        public ?string $name = null,
+        public string|null $name = null,
     ) {
     }
 }

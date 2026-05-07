@@ -13,7 +13,7 @@ use Lightit\Users\App\Resources\UserResource;
 use Lightit\Users\Domain\Models\User;
 use Tests\RequestFactories\StoreUserRequestFactory;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\putJson;
+use function Pest\Laravel\patchJson;
 
 beforeEach(fn () => Notification::fake());
 
@@ -28,7 +28,7 @@ describe('users', function (): void {
             'name' => 'Updated',
         ]);
 
-        $response = putJson(url("/api/users/$user->id"), $data);
+        $response = patchJson(url("/api/users/$user->id"), $data);
 
         $user = User::query()
             ->where('name', $data['name'])
@@ -63,7 +63,7 @@ describe('users', function (): void {
             'password' => 'short',
         ];
 
-        $response = putJson(url("/api/users/$existingUser->id"), $data);
+        $response = patchJson(url("/api/users/$existingUser->id"), $data);
 
         $response->assertUnprocessable()
             ->assertJsonValidationErrors(['name', 'email_address', 'password'], 'error.fields');

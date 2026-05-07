@@ -9,10 +9,10 @@ use SensitiveParameter;
 readonly class UpdateUserDto
 {
     public function __construct(
-        public ?string $name = null,
-        public ?string $emailAddress = null,
+        public string|null $name = null,
+        public string|null $emailAddress = null,
         #[SensitiveParameter]
-        public ?string $password = null,
+        public string|null $password = null,
     ) {
     }
 }

@@ -9,11 +9,11 @@ use Carbon\CarbonImmutable;
 readonly class UpdateAppointmentDto
 {
     public function __construct(
-        public ?int $doctorId = null,
-        public ?int $patientId = null,
-        public ?int $clinicId = null,
-        public ?CarbonImmutable $startsAt = null,
-        public ?CarbonImmutable $endsAt = null,
+        public int|null $doctorId = null,
+        public int|null $patientId = null,
+        public int|null $clinicId = null,
+        public CarbonImmutable|null $startsAt = null,
+        public CarbonImmutable|null $endsAt = null,
     ) {
     }
 }

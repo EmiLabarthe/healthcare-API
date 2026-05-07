@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Lightit\Doctors\Domain\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Lightit\Clinics\Domain\Models\Clinic;
@@ -31,11 +30,10 @@ use Lightit\Clinics\Domain\Models\ClinicDoctor;
  */
 class Doctor extends Model
 {
-    use HasFactory;
-
+    #[\Override]
     protected $guarded = ['id'];
 
-    /** @return BelongsToMany<Clinic, $this> */
+    /** @return BelongsToMany<Clinic, $this, ClinicDoctor> */
     public function clinics(): BelongsToMany
     {
         return $this->belongsToMany(Clinic::class)

@@ -7,8 +7,8 @@ namespace Lightit\Clinics\Domain\DataTransferObjects;
 readonly class UpdateClinicDto
 {
     public function __construct(
-        public ?string $name = null,
-        public ?string $address = null,
+        public string|null $name = null,
+        public string|null $address = null,
     ) {
     }
 }
