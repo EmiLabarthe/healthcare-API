@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Lightit\Users\Domain\Actions;
 
-use Lightit\Users\Domain\DataTransferObjects\UserDto;
+use Lightit\Users\Domain\DataTransferObjects\UpdateUserDto;
 use Lightit\Users\Domain\Models\User;
 
 class UpdateUserAction
 {
-    public function execute(User $user, UserDto $userDto): User
+    public function execute(User $user, UpdateUserDto $userDto): User
     {
-        $user->name = $userDto->name;
-        $user->email = $userDto->emailAddress;
-        $user->password = $userDto->password;
+        $user->name = $userDto->name ?? $user->name;
+        $user->email = $userDto->emailAddress ?? $user->email;
+        $user->password = $userDto->password ?? $user->password;
 
         $user->saveOrFail();
 

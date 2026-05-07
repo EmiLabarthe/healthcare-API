@@ -6,7 +6,7 @@ namespace Lightit\Users\Domain\DataTransferObjects;
 
 use SensitiveParameter;
 
-readonly class UserDto
+readonly class StoreUserDto
 {
     public function __construct(
         public string $name,

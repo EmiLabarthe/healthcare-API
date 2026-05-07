@@ -1,325 +1,708 @@
-<!-- markdownlint-disable MD033 -->
-<!-- markdownlint-disable-next-line MD041 -->
-<p align="center"><a href="https://lightit.io" target="_blank"><img src="/public/logo.png" width="400"></a></p>
+# Healthcare API — Endpoint Reference
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-<!-- markdownlint-enable MD033 -->
+**Base URL**: `http://localhost/api`  
+*(Use `http://localhost:8000/api` when running via `php artisan serve`)*
 
-We help digital health startups, clinics, and medtech companies ideate, design, and develop custom web & mobile applications that transform the future of healthcare.
+All requests and responses use `application/json`. List endpoints return paginated results with `data`, `links`, and `meta` keys.
 
-## Install
+---
 
-Requirements: Php >= 8.5 & Composer
+## Auth
 
-- `brew install php@8.5 composer` Mac OS X with brew
-- `apt-get install php8.5` Ubuntu with apt-get (use sudo if necessary)
-
-This step is not necessary when you use Docker.
-
-### Techs
-
-- Docker
-  - Laravel Sail
-- Laravel 13.X & Php 8.5
-  - Tools
-    - Ide Helper
-    - Phpstan
-    - Php ECS
-    - Rector Php
-    - XDebug
-    - Sentry
-    - Telescope in Local Envoriment
-  - Single Action and Clean Controllers
-  - Request Classes
-  - Strict Mode
-- Postgresql 18
-- Redis
-- Meilisearch
-- Minio
-- Mailpit
-- Scramble – Laravel OpenAPI (Swagger) Documentation Generator
-- Pest Php for Backend Testing
-  - Coverage HTML Report
-- Browser Testing with Dusk (using selenium)
-- Git
-  - PR Template
-  - Issue Template
-  - Git Hooks with CaptainHook
-
-### Backend Installation
-
-1. Clone GitHub repo for this project locally:
-
-   ```bash
-   git clone git@github.com:Light-it-labs/laravel
-   ```
-
-2. cd into your project and create a copy of your .env file
-
-   ```bash
-   cd laravel
-   cp .env.example .env
-   ```
-
-3. Change your Php local version with de Project Version in composer.json
-
-   ```bash
-    ./pvm.sh
-   ```
-
-4. Install composer dependencies with sail included with
-
-    <!-- cspell: disable -->
-
-    ```bash
-    composer install
-    ```
-
-    or if you don't have composer in your machine you can use:
-
-    ```bash
-    docker run --rm \
-        -u "$(id -u):$(id -g)" \
-        -v $(pwd):/var/www/html \
-        -w /var/www/html \
-        composer:latest \
-        composer install --ignore-platform-reqs
-    ```
-
-   <!-- cspell: enable -->
-
-5. After that you can use laravel sail for running your project.
-
-   ```bash
-   sail up
-   ```
-
-   See more detail below.
-
-6. When the app is running, into the bash container (`sail bash`) you can use the following commands:
-
-   ```bash
-   php artisan key:generate
-   php artisan storage:link
-   php artisan ide-helper:generate
-   php artisan migrate --seed
-   ```
-
-### Hooks
-
-You must activate the hooks in your local git repository. To do so, just run the following command.
+### GET /me
+Get the currently authenticated user. Requires a Bearer token.
 
 ```bash
-vendor/bin/captainhook install --force
+curl -X GET http://localhost/api/me \
+  -H "Authorization: Bearer {token}" \
+  -H "Accept: application/json"
 ```
 
-Executing this will create the hook script located in your .git/hooks directory, for each hook you choose to install while running the command. So now every time git triggers a hook, CaptainHook gets executed.
+**Response 200**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Jane Smith",
+    "email_address": "jane@example.com"
+  }
+}
+```
 
-If you don't have PHP installed locally or you have installed a different version, you can use Docker to execute CaptainHook. To do so you must install the hooks a bit differently.
+---
+
+## Users
+
+### GET /users
+List all users (paginated).
 
 ```bash
-vendor/bin/captainhook install --run-mode=docker --run-exec="docker exec CONTAINER_NAME"
+curl -X GET http://localhost/api/users \
+  -H "Accept: application/json"
 ```
 
-You can choose your preferred docker command e.g.:
+**Response 200**
+```json
+{
+  "data": [
+    { "id": 1, "name": "Jane Smith", "email_address": "jane@example.com" }
+  ],
+  "links": { "first": "...", "last": "...", "prev": null, "next": null },
+  "meta": { "current_page": 1, "total": 1 }
+}
+```
+
+---
+
+### POST /users
+Create a new user.
+
+| Field | Type | Rules |
+|---|---|---|
+| `name` | string | required, min:4, max:80 |
+| `email_address` | string | required, unique, valid email, max:100 |
+| `password` | string | required, confirmed, meets default password rules |
+| `password_confirmation` | string | required |
 
 ```bash
-docker exec MY_CONTAINER_NAME
-docker run --rm -v $(pwd):/var/www/html MY_IMAGE_NAME
-docker-compose -f docker/docker-compose.yml run --rm -T MY_SERVICE_NAME
+curl -X POST http://localhost/api/users \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Jane Smith",
+    "email_address": "jane@example.com",
+    "password": "Secret1234!",
+    "password_confirmation": "Secret1234!"
+  }'
 ```
 
-If you want to know more you can see de documentation in the official page <https://php.captainhook.info/>
+**Response 201**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Jane Smith",
+    "email_address": "jane@example.com"
+  }
+}
+```
 
-## Running
+---
 
-We use Laravel Sail, is a light-weight command-line interface for interacting with Laravel's default Docker development environment. Sail provides a great starting point for building a Laravel application without requiring prior Docker experience.
-
-### Configuring A Bash Alias
-
-By default, Sail commands are invoked using the `vendor/bin/sail` script that is included with all new Laravel applications:
-
-However, instead of repeatedly typing vendor/bin/sail to execute Sail commands, you may wish to configure a Bash alias that allows you to execute Sail's commands more easily:
+### GET /users/{id}
+Get a single user. Also returns soft-deleted users.
 
 ```bash
-alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
+curl -X GET http://localhost/api/users/1 \
+  -H "Accept: application/json"
 ```
 
-### Starting & Stopping Sail
+**Response 200**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Jane Smith",
+    "email_address": "jane@example.com"
+  }
+}
+```
+
+---
+
+### PATCH /users/{id}
+Update an existing user. All fields are optional.
+
+| Field | Type | Rules |
+|---|---|---|
+| `name` | string | optional, min:4, max:80 |
+| `email_address` | string | optional, unique (ignores self), max:100 |
+| `password` | string | optional, confirmed |
+| `password_confirmation` | string | required if `password` sent |
 
 ```bash
-sail up
+curl -X PATCH http://localhost/api/users/1 \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Jane Doe"
+  }'
 ```
 
-To start all the Docker containers in the background, you may start Sail in "detached" mode:
+**Response 200**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Jane Doe",
+    "email_address": "jane@example.com"
+  }
+}
+```
+
+---
+
+### DELETE /users/{id}
+Delete a user.
 
 ```bash
-sail up -d
+curl -X DELETE http://localhost/api/users/1 \
+  -H "Accept: application/json"
 ```
 
-To stop all the containers, you may simply press Control + C to stop the container's execution. Or, if the containers are running in the background, you may use the stop command:
+**Response 204** — No content.
+
+---
+
+## Patients
+
+### GET /patients
+List all patients (paginated).
 
 ```bash
-sail stop
+curl -X GET http://localhost/api/patients \
+  -H "Accept: application/json"
 ```
 
-### Executing Commands
+**Response 200**
+```json
+{
+  "data": [
+    { "id": 1, "name": "John Doe", "email": "john@example.com" }
+  ],
+  "links": { "first": "...", "last": "...", "prev": null, "next": null },
+  "meta": { "current_page": 1, "total": 1 }
+}
+```
+
+---
+
+### POST /patients
+Create a new patient.
+
+| Field | Type | Rules |
+|---|---|---|
+| `name` | string | required, min:4, max:80 |
+| `email` | string | required, unique, valid email, max:100 |
 
 ```bash
-# Running Artisan commands locally...
-php artisan queue:work
-
-# Running Artisan commands within Laravel Sail...
-sail artisan queue:work
-
-# Executing PHP Commands
-sail php script.php
-
-# Executing Composer Commands
-sail composer require laravel/sanctum
-
-# Running Tests
-sail test
-
-# Running with Coverage
-sail composer test
+curl -X POST http://localhost/api/patients \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "john@example.com"
+  }'
 ```
 
-For more info <https://laravel.com/docs/10.x/sail>
+**Response 201**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com"
+  }
+}
+```
 
-## Php Standards
+---
 
-Run: `composer fixer` and execute php cs, php cs fixer, php stan and rector.
+### GET /patients/{id}
+Get a single patient.
 
-Read <https://lightit.slite.com/app/docs/rd0tnuQ5w>
+```bash
+curl -X GET http://localhost/api/patients/1 \
+  -H "Accept: application/json"
+```
 
-## Testing
+**Response 200**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com"
+  }
+}
+```
 
-To run all test and generate report coverage you can use:
-`sail composer test`
+---
 
-In computer science, code coverage is a measure used to describe the degree to which the source code of a program is tested by a particular test suite. A program with high code coverage has been more thoroughly tested and has a lower chance of containing software bugs than a program with low code coverage.
+### PATCH /patients/{id}
+Update a patient. All fields are optional.
 
-You can see the report open _index.html_ in the report's folder.
+| Field | Type | Rules |
+|---|---|---|
+| `name` | string | optional, min:4, max:80 |
+| `email` | string | optional, unique (ignores self), max:100 |
 
-### Dusk Test
+```bash
+curl -X PATCH http://localhost/api/patients/1 \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "john.updated@example.com"
+  }'
+```
 
-If you want to run Dusk test, first you need compile files with `vite build` and after that you can use `sail dusk` for running browser test.
-_Important_: make sure the vite server is not running
+**Response 200**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.updated@example.com"
+  }
+}
+```
 
-## XDebug
+---
 
-_PHPStorm configuration_ <!-- markdownlint-disable-line MD036 -->
+### DELETE /patients/{id}
+Delete a patient.
 
-First open `Preferences > PHP > Debug.`
-Just to make sure we will be able to catch the interrupt from xdebug, we just need to check the “Break at first line in PHP scripts”.
-Next, we need to turn on `Run > Start Listening for PHP Debug Connection`.
+```bash
+curl -X DELETE http://localhost/api/patients/1 \
+  -H "Accept: application/json"
+```
 
-Finally, let’s configure the server configuration in `Preferences > PHP > Servers`
+**Response 204** — No content.
 
-Couple of things to ensure
+---
 
-- “Name” must be identical to the one set in the docker-compose.yml
-- Check “Use path mappings”
-- Map your local project folder to the docker folder. (`/var/www/html`)
+## Doctors
 
-That’s it. Create a breakpoint somewhere in the project and check that all is working. Once everything is working, you can remove the “Break at first line in PHP scripts”.
+### GET /doctors
+List all doctors (paginated).
 
-<https://laravel.com/docs/master/sail#debugging-with-xdebug>
+```bash
+curl -X GET http://localhost/api/doctors \
+  -H "Accept: application/json"
+```
 
-## Debugbar
+**Response 200**
+```json
+{
+  "data": [
+    { "id": 1, "name": "Dr. Alice Brown" }
+  ],
+  "links": { "first": "...", "last": "...", "prev": null, "next": null },
+  "meta": { "current_page": 1, "total": 1 }
+}
+```
 
-The web page is using a clockwork as debugbar, it is similar to debugbar from laravel, The most important difference between clockwork and debugbar (standard) is that clockwork only display information in console so, you need to open console (F12)
+---
 
-Full documentation of clockwork in this [link](https://underground.works/clockwork/).
+### POST /doctors
+Create a new doctor.
 
-It is mandatory to install plugin of clockwork in your browser check this [link](https://chrome.google.com/webstore/detail/clockwork/dmggabnehkmmfmdffgajcflpdjlnoemp/related?hl=es)
+| Field | Type | Rules |
+|---|---|---|
+| `name` | string | required, min:4, max:80 |
 
-## Sentry
+```bash
+curl -X POST http://localhost/api/doctors \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Dr. Alice Brown"
+  }'
+```
 
-Sentry is a developer-first error tracking and performance monitoring platform. Errors are logged both from the frontend and backend. In order to get it up and running, you need to follow these steps:
+**Response 201**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Dr. Alice Brown"
+  }
+}
+```
 
-1. Create an account [here](https://sentry.io)
-2. Create a project within an organization
-3. Copy the DSN provided below "Configure SDK" and paste it in your `.env`'s `SENTRY_LARAVEL_DSN`
-4. You can test your configuration using `sail artisan sentry:test`
+---
 
-**DISCLAIMER**: If you see this in your network tab, it may be due to the browser you're using. This screenshot was taken from the Arc browser, which made it seem as if something was missing, while on the Google browser the request is successful.
+### GET /doctors/{id}
+Get a single doctor.
 
-![Sentry request error](image.png)
+```bash
+curl -X GET http://localhost/api/doctors/1 \
+  -H "Accept: application/json"
+```
 
-## HTTP Codes References
+**Response 200**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Dr. Alice Brown"
+  }
+}
+```
 
-The next list contains the HTTP codes returned by the API and the meaning in the present context:
+---
 
-- HTTP 200 Ok: the request has been processed successfully.
-- HTTP 201 Created: the resource has been created. It's associated with a POST Request.
-- HTTP 204 No Content: the request has been processed successfully but does not need to return an entity-body.
-- HTTP 400 Bad Request: the request could not been processed by the API. You should review the data sent to.
-- HTTP 401 Unauthorized: When the request was performed to the login endpoint, means that credentials are not matching with any. When the request was performed to another endpoint means that the token it's not valid anymore due TTL expiration.
-- HTTP 403 Forbidden: the credentials provided with the request has not the necessary permission to be processed.
-- HTTP 404 Not Found: the endpoint requested does not exist in the API.
-- HTTP 422: the payload sent to the API did not pass the validation process.
-- HTTP 500: an unknown error was triggered during the process.
+### PATCH /doctors/{id}
+Update a doctor.
 
-Please refer to <https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html> for reference
+| Field | Type | Rules |
+|---|---|---|
+| `name` | string | optional, min:4, max:80 |
 
-## Host aliases
+```bash
+curl -X PATCH http://localhost/api/doctors/1 \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Dr. Alice Green"
+  }'
+```
 
-To access services in local environment with host aliases, add the following aliases in the `/etc/hosts` file.
+**Response 200**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Dr. Alice Green"
+  }
+}
+```
 
-1. Edit the file with the following command:
+---
 
-   ```bash
-   sudo nano /etc/hosts
-   ```
+### DELETE /doctors/{id}
+Delete a doctor.
 
-2. Paste the following hosts aliases:
+```bash
+curl -X DELETE http://localhost/api/doctors/1 \
+  -H "Accept: application/json"
+```
 
-   ```bash
-   127.0.0.1       laravel.test
-   127.0.0.1       db
-   127.0.0.1       s3
-   127.0.0.1       redis
-   127.0.0.1       mailpit
-   ```
+**Response 204** — No content.
 
-## System Requirements
+---
 
-- php: 8.5.x
-- php ini configurations:
-  - `upload_max_filesize = 100M`
-  - `post_max_size = 100M`
-  - These numbers are illustrative. Set them according to your project needs.
+## Clinics
 
-## Emoji Guide
+### GET /clinics
+List all clinics (paginated).
 
-**For reviewers: Emojis can be added to comments to call out blocking versus non-blocking feedback.**
+```bash
+curl -X GET http://localhost/api/clinics \
+  -H "Accept: application/json"
+```
 
-E.g: Praise, minor suggestions, or clarifying questions that don’t block merging the PR.
+**Response 200**
+```json
+{
+  "data": [
+    { "id": 1, "name": "Central Clinic", "address": "123 Main St, Springfield" }
+  ],
+  "links": { "first": "...", "last": "...", "prev": null, "next": null },
+  "meta": { "current_page": 1, "total": 1 }
+}
+```
 
-> 🟢 Nice refactor!
+---
 
-<!-- markdownlint-disable-line MD028 -->
+### POST /clinics
+Create a new clinic.
 
-> 🟡 Why was the default value removed?
+| Field | Type | Rules |
+|---|---|---|
+| `name` | string | required, min:4, max:80 |
+| `address` | string | required, max:255 |
 
-E.g: Blocking feedback must be addressed before merging.
+```bash
+curl -X POST http://localhost/api/clinics \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Central Clinic",
+    "address": "123 Main St, Springfield"
+  }'
+```
 
-> 🔴 This change will break something important
+**Response 201**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Central Clinic",
+    "address": "123 Main St, Springfield"
+  }
+}
+```
 
-|              |                |                                     |
-| ------------ | -------------- | ----------------------------------- |
-| Blocking     | 🔴 ❌ 🚨       | RED                                 |
-| Non-blocking | 🟡 💡 🤔 💭    | Yellow, thinking, etc               |
-| Praise       | 🟢 💚 😍 👍 🙌 | Green, hearts, positive emojis, etc |
+---
 
-## Links
+### GET /clinics/{id}
+Get a single clinic.
 
-- [Git Flow](https://lightit.slite.com/app/docs/SC8usN2Ju)
-- [Handbook of good practices for reviewers in Code Reviews](https://lightit.slite.com/app/docs/ddNGohWthVB3fO)
+```bash
+curl -X GET http://localhost/api/clinics/1 \
+  -H "Accept: application/json"
+```
+
+**Response 200**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Central Clinic",
+    "address": "123 Main St, Springfield"
+  }
+}
+```
+
+---
+
+### PATCH /clinics/{id}
+Update a clinic. All fields are optional.
+
+| Field | Type | Rules |
+|---|---|---|
+| `name` | string | optional, min:4, max:80 |
+| `address` | string | optional, max:255 |
+
+```bash
+curl -X PATCH http://localhost/api/clinics/1 \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "address": "456 Elm St, Springfield"
+  }'
+```
+
+**Response 200**
+```json
+{
+  "data": {
+    "id": 1,
+    "name": "Central Clinic",
+    "address": "456 Elm St, Springfield"
+  }
+}
+```
+
+---
+
+### DELETE /clinics/{id}
+Delete a clinic.
+
+```bash
+curl -X DELETE http://localhost/api/clinics/1 \
+  -H "Accept: application/json"
+```
+
+**Response 204** — No content.
+
+---
+
+### POST /clinics/{clinic}/doctors/{doctor}
+Attach a doctor to a clinic. Both IDs must refer to existing records.
+
+```bash
+curl -X POST http://localhost/api/clinics/1/doctors/1 \
+  -H "Accept: application/json"
+```
+
+**Response 201**
+```json
+{
+  "data": {
+    "clinic_id": 1,
+    "doctor_id": 1
+  }
+}
+```
+
+---
+
+### DELETE /clinics/{clinic}/doctors/{doctor}
+Detach a doctor from a clinic.
+
+```bash
+curl -X DELETE http://localhost/api/clinics/1/doctors/1 \
+  -H "Accept: application/json"
+```
+
+**Response 204** — No content.
+
+---
+
+## Appointments
+
+### GET /appointments
+List all appointments (paginated).
+
+```bash
+curl -X GET http://localhost/api/appointments \
+  -H "Accept: application/json"
+```
+
+**Response 200**
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "doctor_id": 1,
+      "patient_id": 1,
+      "clinic_id": 1,
+      "starts_at": "2026-06-01T09:00:00.000000Z",
+      "ends_at": "2026-06-01T10:00:00.000000Z",
+      "status": "scheduled"
+    }
+  ],
+  "links": { "first": "...", "last": "...", "prev": null, "next": null },
+  "meta": { "current_page": 1, "total": 1 }
+}
+```
+
+---
+
+### POST /appointments
+Schedule a new appointment.
+
+| Field | Type | Rules |
+|---|---|---|
+| `doctor_id` | integer | required, must exist in doctors |
+| `patient_id` | integer | required, must exist in patients |
+| `clinic_id` | integer | required, must exist in `clinic_doctor` for the given doctor |
+| `starts_at` | datetime | required, after or equal to now |
+| `ends_at` | datetime | required, after `starts_at` |
+
+> The doctor and patient must not have another appointment overlapping the given time range.
+
+```bash
+curl -X POST http://localhost/api/appointments \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "doctor_id": 1,
+    "patient_id": 1,
+    "clinic_id": 1,
+    "starts_at": "2026-06-01 09:00:00",
+    "ends_at": "2026-06-01 10:00:00"
+  }'
+```
+
+**Response 201**
+```json
+{
+  "data": {
+    "id": 1,
+    "doctor_id": 1,
+    "patient_id": 1,
+    "clinic_id": 1,
+    "starts_at": "2026-06-01T09:00:00.000000Z",
+    "ends_at": "2026-06-01T10:00:00.000000Z",
+    "status": "scheduled"
+  }
+}
+```
+
+---
+
+### GET /appointments/{id}
+Get a single appointment.
+
+```bash
+curl -X GET http://localhost/api/appointments/1 \
+  -H "Accept: application/json"
+```
+
+**Response 200**
+```json
+{
+  "data": {
+    "id": 1,
+    "doctor_id": 1,
+    "patient_id": 1,
+    "clinic_id": 1,
+    "starts_at": "2026-06-01T09:00:00.000000Z",
+    "ends_at": "2026-06-01T10:00:00.000000Z",
+    "status": "scheduled"
+  }
+}
+```
+
+---
+
+### PATCH /appointments/{id}
+Update an existing appointment. All fields are optional.
+
+| Field | Type | Rules |
+|---|---|---|
+| `doctor_id` | integer | optional, must exist in doctors |
+| `patient_id` | integer | optional, must exist in patients |
+| `clinic_id` | integer | optional, must be attached to the (updated) doctor |
+| `starts_at` | datetime | optional |
+| `ends_at` | datetime | optional, after `starts_at` |
+
+> Overlap validation runs against the effective time range (merged with existing values), excluding the appointment being updated.
+
+```bash
+curl -X PATCH http://localhost/api/appointments/1 \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ends_at": "2026-06-01 10:30:00"
+  }'
+```
+
+**Response 200**
+```json
+{
+  "data": {
+    "id": 1,
+    "doctor_id": 1,
+    "patient_id": 1,
+    "clinic_id": 1,
+    "starts_at": "2026-06-01T09:00:00.000000Z",
+    "ends_at": "2026-06-01T10:30:00.000000Z",
+    "status": "scheduled"
+  }
+}
+```
+
+---
+
+### DELETE /appointments/{id}
+Cancel an appointment (soft-delete, sets status to `cancelled`).
+
+```bash
+curl -X DELETE http://localhost/api/appointments/1 \
+  -H "Accept: application/json"
+```
+
+**Response 204** — No content.
+
+---
+
+## Common Error Responses
+
+**422 Unprocessable Entity** — Validation failed.
+```json
+{
+  "message": "The name field is required.",
+  "errors": {
+    "name": ["The name field is required."]
+  }
+}
+```
+
+**404 Not Found** — Resource does not exist.
+```json
+{
+  "message": "No query results for model [...]."
+}
+```
+
+**401 Unauthorized** — Missing or invalid Bearer token (auth-protected routes only).
+```json
+{
+  "message": "Unauthenticated."
+}
+```
