@@ -86,5 +86,4 @@ class UpdateAppointmentRequest extends FormRequest
                 : null,
         );
     }
-
 }

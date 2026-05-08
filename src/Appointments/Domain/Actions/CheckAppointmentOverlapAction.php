@@ -16,7 +16,7 @@ abstract class CheckAppointmentOverlapAction
         int $id,
         CarbonImmutable $startsAt,
         CarbonImmutable $endsAt,
-        ?int $excludeAppointmentId = null,
+        int|null $excludeAppointmentId = null,
     ): bool {
         return Appointment::query()
             ->where($this->column(), $id)

@@ -96,5 +96,4 @@ class StoreAppointmentRequest extends FormRequest
             endsAt: CarbonImmutable::parse($this->string(self::ENDS_AT)->toString()),
         );
     }
-
 }
