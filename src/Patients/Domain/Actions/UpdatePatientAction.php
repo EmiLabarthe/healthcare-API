@@ -14,7 +14,9 @@ class UpdatePatientAction
         $patient->name = $dto->name ?? $patient->name;
         $patient->email = $dto->email ?? $patient->email;
 
-        $patient->saveOrFail();
+        if ($patient->isDirty()) {
+            $patient->saveOrFail();
+        }
 
         return $patient;
     }

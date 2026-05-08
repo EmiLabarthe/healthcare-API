@@ -7,7 +7,7 @@ namespace Lightit\Clinics\Domain\Actions;
 use Lightit\Clinics\Domain\Models\Clinic;
 use Lightit\Doctors\Domain\Models\Doctor;
 
-class AttachDoctorAction
+class AssignDoctorToClinicAction
 {
     public function execute(Clinic $clinic, Doctor $doctor): void
     {

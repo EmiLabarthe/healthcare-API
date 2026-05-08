@@ -14,7 +14,9 @@ class UpdateClinicAction
         $clinic->name = $dto->name ?? $clinic->name;
         $clinic->address = $dto->address ?? $clinic->address;
 
-        $clinic->saveOrFail();
+        if ($clinic->isDirty()) {
+            $clinic->saveOrFail();
+        }
 
         return $clinic;
     }

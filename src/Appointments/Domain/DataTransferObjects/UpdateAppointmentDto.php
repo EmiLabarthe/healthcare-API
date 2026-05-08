@@ -10,8 +10,6 @@ readonly class UpdateAppointmentDto
 {
     public function __construct(
         public int|null $doctorId = null,
-        public int|null $patientId = null,
-        public int|null $clinicId = null,
         public CarbonImmutable|null $startsAt = null,
         public CarbonImmutable|null $endsAt = null,
     ) {

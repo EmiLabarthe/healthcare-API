@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Support\Facades\Route;
 use Lightit\Appointments\App\Controllers\CancelAppointmentController;
+use Lightit\Appointments\App\Controllers\DeleteAppointmentController;
 use Lightit\Appointments\App\Controllers\GetAppointmentController;
 use Lightit\Appointments\App\Controllers\ListAppointmentController;
 use Lightit\Appointments\App\Controllers\StoreAppointmentController;
@@ -14,9 +15,9 @@ use Lightit\Patients\App\Controllers\GetPatientController;
 use Lightit\Patients\App\Controllers\ListPatientController;
 use Lightit\Patients\App\Controllers\StorePatientController;
 use Lightit\Patients\App\Controllers\UpdatePatientController;
-use Lightit\Clinics\App\Controllers\AttachDoctorController;
+use Lightit\Clinics\App\Controllers\AssignDoctorToClinicController;
 use Lightit\Clinics\App\Controllers\DeleteClinicController;
-use Lightit\Clinics\App\Controllers\DetachDoctorController;
+use Lightit\Clinics\App\Controllers\RemoveDoctorFromClinicController;
 use Lightit\Clinics\App\Controllers\GetClinicController;
 use Lightit\Clinics\App\Controllers\ListClinicController;
 use Lightit\Clinics\App\Controllers\StoreClinicController;
@@ -67,7 +68,8 @@ Route::prefix('appointments')
         Route::prefix('{appointment}')->group(static function (): void {
             Route::get('/', GetAppointmentController::class);
             Route::patch('/', UpdateAppointmentController::class);
-            Route::delete('/', CancelAppointmentController::class);
+            Route::delete('/', DeleteAppointmentController::class);
+            Route::post('/cancel', CancelAppointmentController::class);
         })->whereNumber('appointment');
     });
 
@@ -101,8 +103,8 @@ Route::prefix('clinics')
             Route::patch('/', UpdateClinicController::class);
             Route::delete('/', DeleteClinicController::class);
             Route::prefix('doctors/{doctor}')->group(static function (): void {
-                Route::post('/', AttachDoctorController::class);
-                Route::delete('/', DetachDoctorController::class);
+                Route::post('/', AssignDoctorToClinicController::class);
+                Route::delete('/', RemoveDoctorFromClinicController::class);
             })->whereNumber('doctor');
         })->whereNumber('clinic');
     });

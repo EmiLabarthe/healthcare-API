@@ -33,9 +33,11 @@ class Patient extends Model
     /** @return Attribute<string, string> */
     protected function email(): Attribute
     {
+        $parser = static fn (mixed $value): string => strtolower(is_string($value) ? $value : '');
+
         return Attribute::make(
-            get: static fn (mixed $value): string => strtolower(is_string($value) ? $value : ''),
-            set: static fn (mixed $value): string => strtolower(is_string($value) ? $value : ''),
+            get: $parser,
+            set: $parser,
         );
     }
 }

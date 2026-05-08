@@ -30,6 +30,7 @@ class AppointmentFactory extends Factory
             'starts_at' => $startsAt,
             'ends_at' => $endsAt,
             'status' => AppointmentStatus::Scheduled,
+            'deleted_at' => null,
         ];
     }
 
@@ -37,7 +38,6 @@ class AppointmentFactory extends Factory
     {
         return $this->state(fn (): array => [
             'status' => AppointmentStatus::Cancelled,
-            'deleted_at' => now(),
         ]);
     }
 }

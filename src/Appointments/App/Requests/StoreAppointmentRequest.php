@@ -8,13 +8,21 @@ use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Lightit\Appointments\Domain\Actions\CheckDoctorAppointmentOverlapAction;
+use Lightit\Appointments\Domain\Actions\CheckPatientAppointmentOverlapAction;
 use Lightit\Appointments\Domain\DataTransferObjects\StoreAppointmentDto;
-use Lightit\Appointments\Domain\Models\Appointment;
 use Lightit\Doctors\Domain\Models\Doctor;
 use Lightit\Patients\Domain\Models\Patient;
 
 class StoreAppointmentRequest extends FormRequest
 {
+    public function __construct(
+        private readonly CheckDoctorAppointmentOverlapAction $checkDoctorOverlap,
+        private readonly CheckPatientAppointmentOverlapAction $checkPatientOverlap,
+    ) {
+        parent::__construct();
+    }
+
     public const string DOCTOR_ID = 'doctor_id';
 
     public const string PATIENT_ID = 'patient_id';
@@ -39,8 +47,14 @@ class StoreAppointmentRequest extends FormRequest
                 Rule::exists('clinic_doctor', 'clinic_id')
                     ->where('doctor_id', $this->integer(self::DOCTOR_ID)),
             ],
-            self::STARTS_AT => ['required', 'date', 'after_or_equal:now'],
-            self::ENDS_AT => ['required', 'date', 'after:' . self::STARTS_AT],
+            self::STARTS_AT => [
+                'required',
+                Rule::date()->afterOrEqual('now'),
+            ],
+            self::ENDS_AT => [
+                'required',
+                Rule::date()->after(self::STARTS_AT),
+            ],
         ];
     }
 
@@ -56,14 +70,14 @@ class StoreAppointmentRequest extends FormRequest
             $doctorId = $this->integer(self::DOCTOR_ID);
             $patientId = $this->integer(self::PATIENT_ID);
 
-            if ($this->hasOverlap($doctorId, self::DOCTOR_ID, $startsAt, $endsAt)) {
+            if ($this->checkDoctorOverlap->execute($doctorId, $startsAt, $endsAt)) {
                 $validator->errors()->add(
                     self::STARTS_AT,
                     __('The doctor already has an appointment in this time range.'),
                 );
             }
 
-            if ($this->hasOverlap($patientId, self::PATIENT_ID, $startsAt, $endsAt)) {
+            if ($this->checkPatientOverlap->execute($patientId, $startsAt, $endsAt)) {
                 $validator->errors()->add(
                     self::STARTS_AT,
                     __('The patient already has an appointment in this time range.'),
@@ -83,16 +97,4 @@ class StoreAppointmentRequest extends FormRequest
         );
     }
 
-    private function hasOverlap(
-        int $relatedId,
-        string $column,
-        CarbonImmutable $startsAt,
-        CarbonImmutable $endsAt,
-    ): bool {
-        return Appointment::query()
-            ->where($column, $relatedId)
-            ->where('starts_at', '<', $endsAt)
-            ->where('ends_at', '>', $startsAt)
-            ->exists();
-    }
 }

@@ -7,19 +7,19 @@ namespace Lightit\Clinics\App\Controllers;
 use Dedoc\Scramble\Attributes\Endpoint;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Response;
-use Lightit\Clinics\Domain\Actions\DetachDoctorAction;
+use Lightit\Clinics\Domain\Actions\AssignDoctorToClinicAction;
 use Lightit\Clinics\Domain\Models\Clinic;
 use Lightit\Doctors\Domain\Models\Doctor;
 
 #[Group('Clinics')]
-final readonly class DetachDoctorController
+final readonly class AssignDoctorToClinicController
 {
     #[Endpoint(
-        operationId: 'detachDoctor',
-        title: 'Detach a doctor from a clinic',
-        description: 'Removes the association between a doctor and a clinic.'
+        operationId: 'assignDoctorToClinic',
+        title: 'Assign a doctor to a clinic',
+        description: 'Associates an existing doctor with a clinic.'
     )]
-    public function __invoke(Clinic $clinic, Doctor $doctor, DetachDoctorAction $action): Response
+    public function __invoke(Clinic $clinic, Doctor $doctor, AssignDoctorToClinicAction $action): Response
     {
         $action->execute($clinic, $doctor);
 

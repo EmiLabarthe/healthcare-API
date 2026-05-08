@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('clinic_id')->constrained()->cascadeOnDelete();
             $table->timestamp('starts_at');
             $table->timestamp('ends_at');
-            $table->string('status')->default(AppointmentStatus::Scheduled->value);
+            $table->string('status')->default(AppointmentStatus::Scheduled);
             $table->softDeletes();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate();

@@ -16,7 +16,7 @@ final readonly class CancelAppointmentController
     #[Endpoint(
         operationId: 'cancelAppointment',
         title: 'Cancel an appointment',
-        description: 'Cancels an appointment by setting its status to cancelled and soft-deleting it.'
+        description: 'Cancels an appointment by setting its status to cancelled.'
     )]
     public function __invoke(Appointment $appointment, CancelAppointmentAction $action): Response
     {

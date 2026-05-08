@@ -13,7 +13,9 @@ class UpdateDoctorAction
     {
         $doctor->name = $dto->name ?? $doctor->name;
 
-        $doctor->saveOrFail();
+        if ($doctor->isDirty()) {
+            $doctor->saveOrFail();
+        }
 
         return $doctor;
     }
