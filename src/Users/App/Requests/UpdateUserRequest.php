@@ -24,13 +24,16 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var User $user */
+        $user = $this->route('user');
+
         return [
             self::NAME => ['sometimes', 'string', 'min:4', 'max:80'],
             self::EMAIL => [
                 'sometimes',
                 'max:100',
                 Email::default(),
-                Rule::unique(User::class, 'email')->ignore($this->route('user')->id),
+                Rule::unique(User::class, 'email')->ignore($user->id),
             ],
             self::PASSWORD => [
                 'sometimes',

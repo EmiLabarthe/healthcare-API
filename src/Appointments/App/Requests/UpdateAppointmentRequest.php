@@ -52,20 +52,20 @@ class UpdateAppointmentRequest extends FormRequest
             $startsAt = CarbonImmutable::parse(
                 $this->has(self::STARTS_AT)
                     ? $this->string(self::STARTS_AT)->toString()
-                    : $existing?->starts_at,
+                    : $existing->starts_at,
             );
             $endsAt = CarbonImmutable::parse(
                 $this->has(self::ENDS_AT)
                     ? $this->string(self::ENDS_AT)->toString()
-                    : $existing?->ends_at,
+                    : $existing->ends_at,
             );
             $doctorId = $this->has(self::DOCTOR_ID)
                 ? $this->integer(self::DOCTOR_ID)
-                : $existing?->doctor_id;
+                : $existing->doctor_id;
 
-            $excludeId = $existing?->id;
+            $excludeId = $existing->id;
 
-            if ($doctorId !== null && $this->checkDoctorOverlap->execute($doctorId, $startsAt, $endsAt, $excludeId)) {
+            if ($this->checkDoctorOverlap->execute($doctorId, $startsAt, $endsAt, $excludeId)) {
                 $validator->errors()->add(
                     self::STARTS_AT,
                     __('The doctor already has an appointment in this time range.'),

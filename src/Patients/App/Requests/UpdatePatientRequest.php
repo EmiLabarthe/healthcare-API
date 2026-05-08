@@ -21,13 +21,16 @@ class UpdatePatientRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var Patient $patient */
+        $patient = $this->route('patient');
+
         return [
             self::NAME => ['sometimes', 'string', 'min:4', 'max:80'],
             self::EMAIL => [
                 'sometimes',
                 'max:100',
                 Email::default(),
-                Rule::unique(Patient::class, 'email')->ignore($this->route('patient')->id),
+                Rule::unique(Patient::class, 'email')->ignore($patient->id),
             ],
         ];
     }
