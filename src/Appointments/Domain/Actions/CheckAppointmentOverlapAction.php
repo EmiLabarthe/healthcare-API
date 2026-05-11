@@ -6,21 +6,26 @@ namespace Lightit\Appointments\Domain\Actions;
 
 use Carbon\CarbonImmutable;
 use Lightit\Appointments\Domain\Enums\AppointmentStatus;
-use Lightit\Appointments\Domain\Models\Appointment;
+use Lightit\Doctors\Domain\Models\Doctor;
+use Lightit\Patients\Domain\Models\Patient;
 
-abstract class CheckAppointmentOverlapAction
+class CheckAppointmentOverlapAction
 {
-    abstract protected function column(): string;
-
+    /**
+     * @param  class-string<Patient|Doctor>  $model
+     */
     public function execute(
-        int $id,
+        string $model,
+        mixed $key,
         CarbonImmutable $startsAt,
         CarbonImmutable $endsAt,
-        int|null $excludeAppointmentId = null,
+        ?int $excludeAppointmentId = null,
     ): bool {
-        return Appointment::query()
-            ->where($this->column(), $id)
-            ->where('status', '!=', AppointmentStatus::Cancelled)
+        $parent = new $model;
+        $parent->{$parent->getKeyName()} = $key;
+
+        return $parent->appointments()
+            ->whereNot('status', AppointmentStatus::Cancelled)
             ->when(
                 $excludeAppointmentId,
                 fn ($query, int $excludeId) => $query->whereKeyNot($excludeId),

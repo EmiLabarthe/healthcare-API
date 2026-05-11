@@ -4,15 +4,21 @@ declare(strict_types=1);
 
 namespace Lightit\Patients\Domain\Models;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Lightit\Appointments\Domain\Models\Appointment;
 
 /**
- * @property int                     $id
- * @property string                  $name
- * @property string                  $email
- * @property \Carbon\CarbonImmutable $created_at
- * @property \Carbon\CarbonImmutable $updated_at
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property CarbonImmutable $created_at
+ * @property CarbonImmutable $updated_at
+ * @property-read Collection<int, Appointment> $appointments
+ * @property-read int|null $appointments_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Patient newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Patient newQuery()
@@ -39,5 +45,11 @@ class Patient extends Model
             get: $parser,
             set: $parser,
         );
+    }
+
+    /** @return HasMany<Appointment, $this> */
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class);
     }
 }

@@ -33,7 +33,7 @@ class UpdateUserRequest extends FormRequest
                 'sometimes',
                 'max:100',
                 Email::default(),
-                Rule::unique(User::class, 'email')->ignore($user->id),
+                Rule::unique(User::class, 'email')->ignore($user),
             ],
             self::PASSWORD => [
                 'sometimes',
