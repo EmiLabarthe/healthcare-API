@@ -12,16 +12,16 @@ use Lightit\Patients\Domain\Models\Patient;
 class CheckAppointmentOverlapAction
 {
     /**
-     * @param  class-string<Patient|Doctor>  $model
+     * @param class-string<Patient|Doctor> $model
      */
     public function execute(
         string $model,
         mixed $key,
         CarbonImmutable $startsAt,
         CarbonImmutable $endsAt,
-        ?int $excludeAppointmentId = null,
+        int|null $excludeAppointmentId = null,
     ): bool {
-        $parent = new $model;
+        $parent = new $model();
         $parent->{$parent->getKeyName()} = $key;
 
         return $parent->appointments()

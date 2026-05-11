@@ -14,8 +14,8 @@ use Lightit\Clinics\Domain\Models\Clinic;
 use Lightit\Clinics\Domain\Models\ClinicDoctor;
 
 /**
- * @property int $id
- * @property string $name
+ * @property int             $id
+ * @property string          $name
  * @property CarbonImmutable $created_at
  * @property CarbonImmutable $updated_at
  * @property-read ClinicDoctor|null $pivot

@@ -12,9 +12,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Lightit\Appointments\Domain\Models\Appointment;
 
 /**
- * @property int $id
- * @property string $name
- * @property string $email
+ * @property int             $id
+ * @property string          $name
+ * @property string          $email
  * @property CarbonImmutable $created_at
  * @property CarbonImmutable $updated_at
  * @property-read Collection<int, Appointment> $appointments
