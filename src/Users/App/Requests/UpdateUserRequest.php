@@ -8,10 +8,10 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Email;
 use Illuminate\Validation\Rules\Password;
-use Lightit\Users\Domain\DataTransferObjects\UserDto;
+use Lightit\Users\Domain\DataTransferObjects\UpdateUserDto;
 use Lightit\Users\Domain\Models\User;
 
-class UpsertUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     public const string NAME = 'name';
 
@@ -24,28 +24,31 @@ class UpsertUserRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var User $user */
+        $user = $this->route('user');
+
         return [
-            self::NAME => ['required', 'string', 'min:4', 'max:80'],
+            self::NAME => ['sometimes', 'string', 'min:4', 'max:80'],
             self::EMAIL => [
-                'required',
+                'sometimes',
                 'max:100',
                 Email::default(),
-                Rule::unique(User::class, 'email'),
+                Rule::unique(User::class, 'email')->ignore($user),
             ],
             self::PASSWORD => [
-                'required',
+                'sometimes',
                 Password::default(),
                 'confirmed',
             ],
         ];
     }
 
-    public function toDto(): UserDto
+    public function toDto(): UpdateUserDto
     {
-        return new UserDto(
-            name: $this->string(self::NAME)->toString(),
-            emailAddress: $this->string(self::EMAIL)->toString(),
-            password: $this->string(self::PASSWORD)->toString(),
+        return new UpdateUserDto(
+            name: $this->has(self::NAME) ? $this->string(self::NAME)->toString() : null,
+            emailAddress: $this->has(self::EMAIL) ? $this->string(self::EMAIL)->toString() : null,
+            password: $this->has(self::PASSWORD) ? $this->string(self::PASSWORD)->toString() : null,
         );
     }
 }
