@@ -11,9 +11,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('patients', function (Blueprint $table): void {
-            $table->string('password')->nullable()->after('email');
-            $table->timestamp('email_verified_at')->nullable()->after('password');
-            $table->rememberToken()->after('email_verified_at');
+            $table->string('password')->nullable();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->rememberToken();
         });
     }
 
