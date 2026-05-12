@@ -7,6 +7,7 @@ namespace Lightit\Appointments\Domain\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Lightit\Appointments\Domain\Enums\AppointmentStatus;
 use Lightit\Clinics\Domain\Models\Clinic;
 use Lightit\Doctors\Domain\Models\Doctor;
@@ -52,6 +53,20 @@ class Appointment extends Model
 
     #[\Override]
     protected $guarded = ['id'];
+
+    public function resolveRouteBinding($value, $field = null): Model|null
+    {
+        $patientId = Auth::guard('api')->id();
+
+        if ($patientId === null) {
+            return null;
+        }
+
+        return $this->newQuery()
+            ->where('patient_id', $patientId)
+            ->where($field ?? $this->getRouteKeyName(), $value)
+            ->firstOrFail();
+    }
 
     /** @return array<string, string> */
     protected function casts(): array

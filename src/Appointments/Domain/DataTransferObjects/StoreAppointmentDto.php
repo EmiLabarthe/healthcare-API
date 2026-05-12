@@ -10,7 +10,6 @@ readonly class StoreAppointmentDto
 {
     public function __construct(
         public int $doctorId,
-        public int $patientId,
         public int $clinicId,
         public CarbonImmutable $startsAt,
         public CarbonImmutable $endsAt,

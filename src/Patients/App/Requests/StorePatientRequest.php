@@ -7,6 +7,7 @@ namespace Lightit\Patients\App\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Email;
+use Illuminate\Validation\Rules\Password;
 use Lightit\Patients\Domain\DataTransferObjects\StorePatientDto;
 use Lightit\Patients\Domain\Models\Patient;
 
@@ -16,9 +17,9 @@ class StorePatientRequest extends FormRequest
 
     public const string EMAIL = 'email';
 
-    /**
-     * @return array<string, mixed>
-     */
+    public const string PASSWORD = 'password';
+
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
@@ -29,6 +30,7 @@ class StorePatientRequest extends FormRequest
                 Email::default(),
                 Rule::unique(Patient::class, 'email'),
             ],
+            self::PASSWORD => ['required', 'string', Password::default()],
         ];
     }
 
@@ -37,6 +39,7 @@ class StorePatientRequest extends FormRequest
         return new StorePatientDto(
             name: $this->string(self::NAME)->toString(),
             email: $this->string(self::EMAIL)->toString(),
+            password: $this->string(self::PASSWORD)->toString(),
         );
     }
 }

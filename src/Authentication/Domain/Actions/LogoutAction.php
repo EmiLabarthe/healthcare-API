@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Lightit\Authentication\Domain\Actions;
+
+use Illuminate\Contracts\Auth\Factory as AuthFactory;
+use PHPOpenSourceSaver\JWTAuth\JWTGuard;
+
+class LogoutAction
+{
+    public function __construct(
+        private readonly AuthFactory $factory,
+    ) {
+    }
+
+    public function execute(): void
+    {
+        /** @var JWTGuard $guard */
+        $guard = $this->factory->guard();
+
+        $token = $guard->getRequest()->bearerToken();
+
+        if ($token !== null) {
+            $guard->setToken($token);
+        }
+
+        $guard->logout();
+    }
+}

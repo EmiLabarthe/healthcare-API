@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Lightit\Appointments\Domain\Actions;
 
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 use Lightit\Appointments\Domain\Models\Appointment;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -16,10 +17,11 @@ class ListAppointmentAction
      */
     public function execute(): LengthAwarePaginator
     {
-        return QueryBuilder::for(Appointment::class)
+        $baseQuery = Appointment::query()->where('patient_id', (int) Auth::guard('api')->id());
+
+        return QueryBuilder::for($baseQuery)
             ->allowedFilters([
                 AllowedFilter::exact('doctor_id'),
-                AllowedFilter::exact('patient_id'),
                 AllowedFilter::exact('clinic_id'),
                 AllowedFilter::exact('status'),
             ])

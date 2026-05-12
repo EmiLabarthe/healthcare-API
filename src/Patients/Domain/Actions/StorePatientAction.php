@@ -15,6 +15,7 @@ class StorePatientAction
 
         $patient->name = $dto->name;
         $patient->email = $dto->email;
+        $patient->password = $dto->password;
 
         $patient->saveOrFail();
 

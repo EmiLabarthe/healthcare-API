@@ -7,6 +7,7 @@ namespace Lightit\Appointments\App\Requests;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Lightit\Appointments\Domain\Actions\CheckAppointmentOverlapAction;
 use Lightit\Appointments\Domain\DataTransferObjects\StoreAppointmentDto;
@@ -23,22 +24,17 @@ class StoreAppointmentRequest extends FormRequest
 
     public const string DOCTOR_ID = 'doctor_id';
 
-    public const string PATIENT_ID = 'patient_id';
-
     public const string CLINIC_ID = 'clinic_id';
 
     public const string STARTS_AT = 'starts_at';
 
     public const string ENDS_AT = 'ends_at';
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
             self::DOCTOR_ID => ['required', 'integer', Rule::exists(Doctor::class, 'id')],
-            self::PATIENT_ID => ['required', 'integer', Rule::exists(Patient::class, 'id')],
             self::CLINIC_ID => [
                 'required',
                 'integer',
@@ -66,7 +62,7 @@ class StoreAppointmentRequest extends FormRequest
             $startsAt = CarbonImmutable::parse($this->string(self::STARTS_AT)->toString());
             $endsAt = CarbonImmutable::parse($this->string(self::ENDS_AT)->toString());
             $doctorId = $this->integer(self::DOCTOR_ID);
-            $patientId = $this->integer(self::PATIENT_ID);
+            $patientId = (int) Auth::guard('api')->id();
 
             if ($this->checkOverlap->execute(Doctor::class, $doctorId, $startsAt, $endsAt)) {
                 $validator->errors()->add(
@@ -88,7 +84,6 @@ class StoreAppointmentRequest extends FormRequest
     {
         return new StoreAppointmentDto(
             doctorId: $this->integer(self::DOCTOR_ID),
-            patientId: $this->integer(self::PATIENT_ID),
             clinicId: $this->integer(self::CLINIC_ID),
             startsAt: CarbonImmutable::parse($this->string(self::STARTS_AT)->toString()),
             endsAt: CarbonImmutable::parse($this->string(self::ENDS_AT)->toString()),

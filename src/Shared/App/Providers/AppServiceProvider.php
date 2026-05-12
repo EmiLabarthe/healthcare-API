@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        if ($this->app->isProduction()) {
+        if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
     }
@@ -40,13 +40,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        DB::prohibitDestructiveCommands($this->app->isProduction());
+        DB::prohibitDestructiveCommands($this->app->environment('production'));
 
-        if ($this->app->isProduction() && Config::boolean('app.debug')) {
+        if ($this->app->environment('production') && Config::boolean('app.debug')) {
             throw new \RuntimeException('Debug mode is enabled in production environment');
         }
 
-        Model::shouldBeStrict(! $this->app->isProduction());
+        Model::shouldBeStrict(! $this->app->environment('production'));
 
         RateLimiter::for('api', function (Request $request) {
             $rateLimiter = Config::integer('app.rate.limit');
@@ -63,14 +63,14 @@ class AppServiceProvider extends ServiceProvider
                 ->mixedCase()
                 ->numbers()
                 ->symbols()
-                ->uncompromised()
+            // ->uncompromised()
         );
 
         Email::defaults(
             fn () => Rule::email()
                 ->rfcCompliant(strict: true)
                 ->when(
-                    $this->app->isProduction(),
+                    $this->app->environment('production'),
                     fn (Email $rule) => $rule
                         ->validateMxRecord()
                         ->preventSpoofing()
