@@ -63,7 +63,6 @@ class AppServiceProvider extends ServiceProvider
                 ->mixedCase()
                 ->numbers()
                 ->symbols()
-            // ->uncompromised()
         );
 
         Email::defaults(
