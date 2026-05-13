@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+use Tests\TestCase;
 
 /*
 |--------------------------------------------------------------------------
@@ -9,30 +9,13 @@ declare(strict_types=1);
 |
 | The closure you provide to your test functions is always bound to a specific PHPUnit test
 | case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "uses()" function to bind a different classes or traits.
+| need to change it using the "pest()" function to bind a different classes or traits.
 |
 */
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Process;
-use Illuminate\Support\Sleep;
-use Illuminate\Support\Str;
-use Saloon\MockConfig;
-use function Pest\Laravel\freezeTime;
-
-uses(
-    Tests\TestCase::class,
-    Illuminate\Foundation\Testing\RefreshDatabase::class,
-)->beforeEach(function (): void {
-    Str::createRandomStringsNormally();
-    Str::createUuidsNormally();
-    Http::preventStrayRequests();
-    Process::preventStrayProcesses();
-    Sleep::fake();
-    MockConfig::throwOnMissingFixtures();
-
-    freezeTime();
-})->in('Feature');
+pest()->extend(TestCase::class)
+    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->in('Feature');
 
 /*
 |--------------------------------------------------------------------------
@@ -45,6 +28,9 @@ uses(
 |
 */
 
+expect()->extend('toBeOne', function () {
+    return $this->toBe(1);
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -56,3 +42,8 @@ uses(
 | global functions to help you to reduce the number of lines of code in your test files.
 |
 */
+
+function something()
+{
+    // ..
+}
