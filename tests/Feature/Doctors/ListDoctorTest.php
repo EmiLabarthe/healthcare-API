@@ -55,9 +55,9 @@ describe('doctors', function (): void {
     });
 
     it('orders doctors by id desc by default', function (): void {
-        $first  = DoctorFactory::new()->createOne(['name' => 'First Created']);
+        $first = DoctorFactory::new()->createOne(['name' => 'First Created']);
         $second = DoctorFactory::new()->createOne(['name' => 'Second Created']);
-        $third  = DoctorFactory::new()->createOne(['name' => 'Third Created']);
+        $third = DoctorFactory::new()->createOne(['name' => 'Third Created']);
 
         getJson(url('/api/doctors'))
             ->assertOk()
