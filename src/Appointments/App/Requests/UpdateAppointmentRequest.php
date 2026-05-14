@@ -32,10 +32,16 @@ class UpdateAppointmentRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var Appointment $existing */
+        $existing = $this->route('appointment');
+        $startsAt = $this->has(self::STARTS_AT)
+            ? $this->string(self::STARTS_AT)->toString()
+            : $existing->starts_at->toDateTimeString();
+
         return [
             self::DOCTOR_ID => ['sometimes', 'integer', Rule::exists(Doctor::class, 'id')],
             self::STARTS_AT => ['sometimes', Rule::date()->afterOrEqual('now')],
-            self::ENDS_AT => ['sometimes', Rule::date()->after(self::STARTS_AT)],
+            self::ENDS_AT => ['sometimes', Rule::date()->after($startsAt)],
         ];
     }
 
