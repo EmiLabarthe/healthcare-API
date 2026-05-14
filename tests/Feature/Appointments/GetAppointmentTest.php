@@ -6,7 +6,7 @@ namespace Tests\Feature\Appointments;
 
 use Database\Factories\AppointmentFactory;
 use Database\Factories\PatientFactory;
-use Illuminate\Testing\Fluent\AssertableJson;
+use Illuminate\Http\Request;
 use Lightit\Appointments\App\Controllers\GetAppointmentController;
 use Lightit\Appointments\App\Resources\AppointmentResource;
 use Tests\TestCase;
@@ -22,20 +22,9 @@ describe('appointments', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
-        /** @var array<string, mixed> $resourceData */
-        $resourceData = json_decode(
-            (string) json_encode(AppointmentResource::make($appointment)->resolve()),
-            true,
-        );
-
         getJson(url("/api/appointments/{$appointment->id}"))
             ->assertOk()
-            ->assertJson(
-                fn (AssertableJson $json): AssertableJson => $json->has(
-                    'data',
-                    fn (AssertableJson $json): AssertableJson => $json->whereAll($resourceData)
-                )
-            );
+            ->assertJsonPath('data', AppointmentResource::make($appointment)->toArray(new Request()));
     });
 
     it('returns 404 when retrieving an appointment owned by another patient', function (): void {
