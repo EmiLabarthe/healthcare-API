@@ -6,9 +6,9 @@ namespace Tests\Feature\Appointments;
 
 use Database\Factories\AppointmentFactory;
 use Database\Factories\PatientFactory;
-use Illuminate\Http\Request;
 use Lightit\Appointments\App\Controllers\GetAppointmentController;
 use Lightit\Appointments\App\Resources\AppointmentResource;
+use PHPUnit\Framework\Assert;
 use Tests\TestCase;
 
 use function Pest\Laravel\getJson;
@@ -22,9 +22,12 @@ describe('appointments', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
+        $expected = AppointmentResource::make($appointment)->response()->getData(true);
+        Assert::assertIsArray($expected);
+
         getJson(url("/api/appointments/{$appointment->id}"))
             ->assertOk()
-            ->assertJsonPath('data', AppointmentResource::make($appointment)->toArray(new Request()));
+            ->assertJson($expected);
     });
 
     it('returns 404 when retrieving an appointment owned by another patient', function (): void {
