@@ -22,7 +22,7 @@ class StorePatientRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         if ($this->has(self::EMAIL)) {
-            $this->merge([self::EMAIL => strtolower((string) $this->input(self::EMAIL))]);
+            $this->merge([self::EMAIL => $this->string(self::EMAIL)->lower()->toString()]);
         }
     }
 
