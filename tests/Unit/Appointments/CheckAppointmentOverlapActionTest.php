@@ -17,7 +17,7 @@ use Tests\TestCase;
 describe('CheckAppointmentOverlapAction', function (): void {
     beforeEach(function (): void {
         /** @var TestCase $this */
-        $this->action = app(CheckAppointmentOverlapAction::class);
+        $this->action = resolve(CheckAppointmentOverlapAction::class);
         $this->doctor = DoctorFactory::new()->createOne();
         $this->patient = PatientFactory::new()->createOne();
 

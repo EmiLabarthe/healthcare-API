@@ -18,7 +18,7 @@ describe('Appointment::resolveRouteBinding', function (): void {
     it('returns null when no api user is authenticated', function (): void {
         $appointment = AppointmentFactory::new()->createOne();
 
-        $resolved = (new Appointment())->resolveRouteBinding($appointment->id);
+        $resolved = new Appointment()->resolveRouteBinding($appointment->id);
 
         expect($resolved)->toBeNull();
     });
@@ -30,7 +30,7 @@ describe('Appointment::resolveRouteBinding', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
-        $resolved = (new Appointment())->resolveRouteBinding($appointment->id);
+        $resolved = new Appointment()->resolveRouteBinding($appointment->id);
 
         expect($resolved?->id)->toBe($appointment->id);
     });
@@ -43,7 +43,7 @@ describe('Appointment::resolveRouteBinding', function (): void {
         /** @var TestCase $this */
         $this->actingAs($intruder, 'api');
 
-        expect(fn () => (new Appointment())->resolveRouteBinding($appointment->id))
+        expect(fn (): ?\Illuminate\Database\Eloquent\Model => new Appointment()->resolveRouteBinding($appointment->id))
             ->toThrow(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
     });
 });
