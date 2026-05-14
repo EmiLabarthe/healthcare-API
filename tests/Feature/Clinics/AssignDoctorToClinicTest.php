@@ -7,6 +7,7 @@ namespace Tests\Feature\Clinics;
 use Database\Factories\ClinicFactory;
 use Database\Factories\DoctorFactory;
 use Lightit\Clinics\App\Controllers\AssignDoctorToClinicController;
+use Lightit\Clinics\Domain\Models\ClinicDoctor;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\postJson;
@@ -20,7 +21,7 @@ describe('clinics', function (): void {
         postJson(url("/api/clinics/{$clinic->id}/doctors/{$doctor->id}"))
             ->assertNoContent();
 
-        assertDatabaseHas('clinic_doctor', [
+        assertDatabaseHas(ClinicDoctor::class, [
             'clinic_id' => $clinic->id,
             'doctor_id' => $doctor->id,
         ]);

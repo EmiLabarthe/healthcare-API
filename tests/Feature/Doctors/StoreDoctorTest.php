@@ -44,7 +44,7 @@ describe('doctors', function (): void {
                 )
             );
 
-        assertDatabaseHas('doctors', [
+        assertDatabaseHas(Doctor::class, [
             'name' => $payload['name'],
         ]);
     });
@@ -58,7 +58,7 @@ describe('doctors', function (): void {
             ->assertUnprocessable()
             ->assertJsonValidationErrors([$field], 'error.fields');
 
-        assertDatabaseMissing('doctors', ['name' => 'Valid Doctor Name']);
+        assertDatabaseMissing(Doctor::class, ['name' => 'Valid Doctor Name']);
     })->with('store-doctor-validation');
 
     it('rejects a missing name field entirely', function (): void {

@@ -8,6 +8,7 @@ use Database\Factories\AppointmentFactory;
 use Database\Factories\PatientFactory;
 use Lightit\Appointments\App\Controllers\CancelAppointmentController;
 use Lightit\Appointments\Domain\Enums\AppointmentStatus;
+use Lightit\Appointments\Domain\Models\Appointment;
 use Tests\TestCase;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -27,7 +28,7 @@ describe('appointments', function (): void {
 
         postJson(url("/api/appointments/{$appointment->id}/cancel"))->assertNoContent();
 
-        assertDatabaseHas('appointments', [
+        assertDatabaseHas(Appointment::class, [
             'id'     => $appointment->id,
             'status' => AppointmentStatus::Cancelled->value,
         ]);
@@ -42,7 +43,7 @@ describe('appointments', function (): void {
 
         postJson(url("/api/appointments/{$appointment->id}/cancel"))->assertNoContent();
 
-        assertDatabaseHas('appointments', [
+        assertDatabaseHas(Appointment::class, [
             'id'     => $appointment->id,
             'status' => AppointmentStatus::Cancelled->value,
         ]);
@@ -61,7 +62,7 @@ describe('appointments', function (): void {
 
         postJson(url("/api/appointments/{$appointment->id}/cancel"))->assertNotFound();
 
-        assertDatabaseHas('appointments', [
+        assertDatabaseHas(Appointment::class, [
             'id'     => $appointment->id,
             'status' => AppointmentStatus::Scheduled->value,
         ]);

@@ -11,6 +11,7 @@ use Database\Factories\PatientFactory;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Lightit\Appointments\App\Controllers\UpdateAppointmentController;
 use Lightit\Appointments\App\Resources\AppointmentResource;
+use Lightit\Appointments\Domain\Models\Appointment;
 use Tests\TestCase;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -60,7 +61,7 @@ describe('appointments', function (): void {
             )
         );
 
-        assertDatabaseHas('appointments', [
+        assertDatabaseHas(Appointment::class, [
             'id'        => $appointment->id,
             'doctor_id' => $newDoctor->id,
         ]);
