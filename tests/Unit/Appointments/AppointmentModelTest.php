@@ -30,6 +30,7 @@ describe('Appointment::resolveRouteBinding', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
+        /** @var Appointment|null $resolved */
         $resolved = new Appointment()->resolveRouteBinding($appointment->id);
 
         expect($resolved?->id)->toBe($appointment->id);
@@ -43,7 +44,9 @@ describe('Appointment::resolveRouteBinding', function (): void {
         /** @var TestCase $this */
         $this->actingAs($intruder, 'api');
 
-        expect(fn (): \Illuminate\Database\Eloquent\Model|null => new Appointment()->resolveRouteBinding($appointment->id))
+        expect(
+            fn (): \Illuminate\Database\Eloquent\Model|null => new Appointment()->resolveRouteBinding($appointment->id)
+        )
             ->toThrow(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
     });
 });
