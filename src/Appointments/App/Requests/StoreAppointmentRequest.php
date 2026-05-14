@@ -7,7 +7,6 @@ namespace Lightit\Appointments\App\Requests;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Lightit\Appointments\Domain\Actions\CheckAppointmentOverlapAction;
 use Lightit\Appointments\Domain\DataTransferObjects\StoreAppointmentDto;
@@ -62,7 +61,9 @@ class StoreAppointmentRequest extends FormRequest
             $startsAt = CarbonImmutable::parse($this->string(self::STARTS_AT)->toString());
             $endsAt = CarbonImmutable::parse($this->string(self::ENDS_AT)->toString());
             $doctorId = $this->integer(self::DOCTOR_ID);
-            $patientId = (int) Auth::guard('api')->id();
+            /** @var Patient $patient */
+            $patient = $this->user();
+            $patientId = $patient->id;
 
             if ($this->checkOverlap->execute(Doctor::class, $doctorId, $startsAt, $endsAt)) {
                 $validator->errors()->add(
@@ -80,10 +81,11 @@ class StoreAppointmentRequest extends FormRequest
         });
     }
 
-    public function toDto(): StoreAppointmentDto
+    public function toDto(Patient $patient): StoreAppointmentDto
     {
         return new StoreAppointmentDto(
             doctorId: $this->integer(self::DOCTOR_ID),
+            patientId: $patient->id,
             clinicId: $this->integer(self::CLINIC_ID),
             startsAt: CarbonImmutable::parse($this->string(self::STARTS_AT)->toString()),
             endsAt: CarbonImmutable::parse($this->string(self::ENDS_AT)->toString()),

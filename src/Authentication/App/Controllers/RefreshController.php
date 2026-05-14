@@ -16,7 +16,7 @@ class RefreshController
     public function __invoke(JWTAuth $jwtAuth): JsonResponse
     {
         /** @var JWTGuard $guard */
-        $guard = Auth::guard('api');
+        $guard = Auth::guard();
 
         $token = $guard->refresh();
 

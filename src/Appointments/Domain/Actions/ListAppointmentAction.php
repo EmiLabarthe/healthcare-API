@@ -17,7 +17,7 @@ class ListAppointmentAction
      */
     public function execute(): LengthAwarePaginator
     {
-        $baseQuery = Appointment::query()->where('patient_id', (int) Auth::guard('api')->id());
+        $baseQuery = Appointment::query()->where('patient_id', (int) Auth::id());
 
         return QueryBuilder::for($baseQuery)
             ->allowedFilters([

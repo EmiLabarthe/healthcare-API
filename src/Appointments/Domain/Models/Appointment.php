@@ -56,7 +56,7 @@ class Appointment extends Model
 
     public function resolveRouteBinding($value, $field = null): Model|null
     {
-        $patientId = Auth::guard('api')->id();
+        $patientId = Auth::id();
 
         if ($patientId === null) {
             return null;
