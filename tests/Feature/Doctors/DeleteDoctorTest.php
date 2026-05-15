@@ -6,9 +6,9 @@ namespace Tests\Feature\Doctors;
 
 use Database\Factories\ClinicFactory;
 use Database\Factories\DoctorFactory;
-use Lightit\Doctors\App\Controllers\DeleteDoctorController;
 use Lightit\Clinics\Domain\Models\Clinic;
 use Lightit\Clinics\Domain\Models\ClinicDoctor;
+use Lightit\Doctors\App\Controllers\DeleteDoctorController;
 use Lightit\Doctors\Domain\Models\Doctor;
 
 use function Pest\Laravel\assertDatabaseHas;

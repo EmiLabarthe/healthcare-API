@@ -6,8 +6,8 @@ namespace Tests\Feature\Patients;
 
 use Database\Factories\AppointmentFactory;
 use Database\Factories\PatientFactory;
-use Lightit\Patients\App\Controllers\DeletePatientController;
 use Lightit\Appointments\Domain\Models\Appointment;
+use Lightit\Patients\App\Controllers\DeletePatientController;
 use Lightit\Patients\Domain\Models\Patient;
 
 use function Pest\Laravel\assertDatabaseHas;
