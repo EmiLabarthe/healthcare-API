@@ -14,9 +14,9 @@ use Lightit\Appointments\Domain\Actions\ListAppointmentAction;
 final readonly class ListAppointmentController
 {
     #[Endpoint(
-        operationId: 'listAppointments',
-        title: 'List appointments',
-        description: 'Retrieves a paginated list of appointments.'
+        operationId: 'listMyAppointments',
+        title: 'List my appointments',
+        description: 'Retrieves a paginated list of appointments belonging to the authenticated patient.'
     )]
     public function __invoke(ListAppointmentAction $action): JsonResponse
     {
