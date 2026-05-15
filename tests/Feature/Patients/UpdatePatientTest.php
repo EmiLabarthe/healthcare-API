@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Lightit\Patients\App\Controllers\UpdatePatientController;
 use Lightit\Patients\App\Resources\PatientResource;
+use Lightit\Patients\Domain\Models\Patient;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\patchJson;
@@ -41,7 +42,7 @@ describe('patients', function (): void {
                 )
             );
 
-        assertDatabaseHas('patients', [
+        assertDatabaseHas(Patient::class, [
             'id'    => $patient->id,
             'name'  => 'New Name',
             'email' => 'new@example.com',
@@ -57,7 +58,7 @@ describe('patients', function (): void {
         patchJson(url("/api/patients/{$patient->id}"), ['name' => 'Renamed'])
             ->assertOk();
 
-        assertDatabaseHas('patients', [
+        assertDatabaseHas(Patient::class, [
             'id'    => $patient->id,
             'name'  => 'Renamed',
             'email' => 'keep@example.com',
@@ -73,7 +74,7 @@ describe('patients', function (): void {
         patchJson(url("/api/patients/{$patient->id}"), [])
             ->assertOk();
 
-        assertDatabaseHas('patients', [
+        assertDatabaseHas(Patient::class, [
             'id'    => $patient->id,
             'name'  => 'Unchanged',
             'email' => 'unchanged@example.com',
@@ -86,7 +87,7 @@ describe('patients', function (): void {
         patchJson(url("/api/patients/{$patient->id}"), ['email' => 'AfterMix@Example.COM'])
             ->assertOk();
 
-        assertDatabaseHas('patients', [
+        assertDatabaseHas(Patient::class, [
             'id'    => $patient->id,
             'email' => 'aftermix@example.com',
         ]);
@@ -103,7 +104,7 @@ describe('patients', function (): void {
             'email' => 'sameemail@example.com',
         ])->assertOk();
 
-        assertDatabaseHas('patients', [
+        assertDatabaseHas(Patient::class, [
             'id'    => $patient->id,
             'name'  => 'New Display Name',
             'email' => 'sameemail@example.com',
@@ -120,7 +121,7 @@ describe('patients', function (): void {
             'email' => 'SELF@EXAMPLE.COM',
         ])->assertOk();
 
-        assertDatabaseHas('patients', [
+        assertDatabaseHas(Patient::class, [
             'id'    => $patient->id,
             'name'  => 'Case Keeper',
             'email' => 'self@example.com',

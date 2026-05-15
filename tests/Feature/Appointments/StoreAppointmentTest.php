@@ -68,7 +68,7 @@ describe('appointments', function (): void {
                 )
             );
 
-        assertDatabaseHas('appointments', [
+        assertDatabaseHas(Appointment::class, [
             'id'         => $appointment->id,
             'doctor_id'  => $doctor->id,
             'patient_id' => $patient->id,
@@ -101,11 +101,11 @@ describe('appointments', function (): void {
             'status'     => AppointmentStatus::Cancelled->value,
         ])->assertCreated();
 
-        assertDatabaseHas('appointments', [
+        assertDatabaseHas(Appointment::class, [
             'patient_id' => $authPatient->id,
             'status'     => AppointmentStatus::Scheduled->value,
         ]);
-        assertDatabaseMissing('appointments', ['patient_id' => $otherPatient->id]);
+        assertDatabaseMissing(Appointment::class, ['patient_id' => $otherPatient->id]);
     });
 
     it('rejects invalid field values', function (string $field, string $value): void {

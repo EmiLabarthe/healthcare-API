@@ -46,7 +46,7 @@ describe('clinics', function (): void {
                 )
             );
 
-        assertDatabaseHas('clinics', [
+        assertDatabaseHas(Clinic::class, [
             'name'    => $payload['name'],
             'address' => $payload['address'],
         ]);
@@ -62,6 +62,6 @@ describe('clinics', function (): void {
             ->assertUnprocessable()
             ->assertJsonValidationErrors([$field], 'error.fields');
 
-        assertDatabaseMissing('clinics', ['name' => 'Valid Clinic Name']);
+        assertDatabaseMissing(Clinic::class, ['name' => 'Valid Clinic Name']);
     })->with('store-clinic-validation');
 });

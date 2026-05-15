@@ -7,6 +7,8 @@ namespace Tests\Feature\Patients;
 use Database\Factories\AppointmentFactory;
 use Database\Factories\PatientFactory;
 use Lightit\Patients\App\Controllers\DeletePatientController;
+use Lightit\Appointments\Domain\Models\Appointment;
+use Lightit\Patients\Domain\Models\Patient;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -19,7 +21,7 @@ describe('patients', function (): void {
 
         deleteJson(url("/api/patients/{$patient->id}"))->assertNoContent();
 
-        assertDatabaseMissing('patients', ['id' => $patient->id]);
+        assertDatabaseMissing(Patient::class, ['id' => $patient->id]);
     });
 
     it('returns 404 when deleting a missing patient', function (): void {
@@ -34,11 +36,11 @@ describe('patients', function (): void {
         $patient = PatientFactory::new()->createOne();
         $appointment = AppointmentFactory::new()->createOne(['patient_id' => $patient->id]);
 
-        assertDatabaseHas('appointments', ['id' => $appointment->id]);
+        assertDatabaseHas(Appointment::class, ['id' => $appointment->id]);
 
         deleteJson(url("/api/patients/{$patient->id}"))->assertNoContent();
 
-        assertDatabaseMissing('appointments', ['id' => $appointment->id]);
+        assertDatabaseMissing(Appointment::class, ['id' => $appointment->id]);
     });
 
     it('does not delete unrelated patients', function (): void {
@@ -47,7 +49,7 @@ describe('patients', function (): void {
 
         deleteJson(url("/api/patients/{$target->id}"))->assertNoContent();
 
-        assertDatabaseMissing('patients', ['id' => $target->id]);
-        assertDatabaseHas('patients', ['id' => $bystander->id]);
+        assertDatabaseMissing(Patient::class, ['id' => $target->id]);
+        assertDatabaseHas(Patient::class, ['id' => $bystander->id]);
     });
 });

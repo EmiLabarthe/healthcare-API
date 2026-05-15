@@ -7,6 +7,9 @@ namespace Tests\Feature\Clinics;
 use Database\Factories\ClinicFactory;
 use Database\Factories\DoctorFactory;
 use Lightit\Clinics\App\Controllers\DeleteClinicController;
+use Lightit\Clinics\Domain\Models\Clinic;
+use Lightit\Clinics\Domain\Models\ClinicDoctor;
+use Lightit\Doctors\Domain\Models\Doctor;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -19,7 +22,7 @@ describe('clinics', function (): void {
 
         deleteJson(url("/api/clinics/{$clinic->id}"))->assertNoContent();
 
-        assertDatabaseMissing('clinics', ['id' => $clinic->id]);
+        assertDatabaseMissing(Clinic::class, ['id' => $clinic->id]);
     });
 
     it('returns 404 when deleting a missing clinic', function (): void {
@@ -31,14 +34,14 @@ describe('clinics', function (): void {
         $doctor = DoctorFactory::new()->createOne();
         $clinic->doctors()->attach($doctor->id);
 
-        assertDatabaseHas('clinic_doctor', [
+        assertDatabaseHas(ClinicDoctor::class, [
             'clinic_id' => $clinic->id,
             'doctor_id' => $doctor->id,
         ]);
 
         deleteJson(url("/api/clinics/{$clinic->id}"))->assertNoContent();
 
-        assertDatabaseMissing('clinic_doctor', ['clinic_id' => $clinic->id]);
-        assertDatabaseHas('doctors', ['id' => $doctor->id]);
+        assertDatabaseMissing(ClinicDoctor::class, ['clinic_id' => $clinic->id]);
+        assertDatabaseHas(Doctor::class, ['id' => $doctor->id]);
     });
 });

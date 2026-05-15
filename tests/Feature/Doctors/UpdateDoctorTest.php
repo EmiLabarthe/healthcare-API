@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Lightit\Doctors\App\Controllers\UpdateDoctorController;
 use Lightit\Doctors\App\Resources\DoctorResource;
+use Lightit\Doctors\Domain\Models\Doctor;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\patchJson;
@@ -41,7 +42,7 @@ describe('doctors', function (): void {
                 )
             );
 
-        assertDatabaseHas('doctors', [
+        assertDatabaseHas(Doctor::class, [
             'id'   => $doctor->id,
             'name' => 'New Name',
         ]);
@@ -53,7 +54,7 @@ describe('doctors', function (): void {
         patchJson(url("/api/doctors/{$doctor->id}"), [])
             ->assertOk();
 
-        assertDatabaseHas('doctors', [
+        assertDatabaseHas(Doctor::class, [
             'id'   => $doctor->id,
             'name' => 'Unchanged',
         ]);

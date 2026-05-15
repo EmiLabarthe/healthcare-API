@@ -25,8 +25,8 @@ describe('appointments', function (): void {
 
         deleteJson(url("/api/appointments/{$appointment->id}"))->assertNoContent();
 
-        assertSoftDeleted('appointments', ['id' => $appointment->id]);
-        assertDatabaseHas('appointments', ['id' => $appointment->id]);
+        assertSoftDeleted(Appointment::class, ['id' => $appointment->id]);
+        assertDatabaseHas(Appointment::class, ['id' => $appointment->id]);
         expect(Appointment::withTrashed()->find($appointment->id))->not->toBeNull();
     });
 
@@ -40,7 +40,7 @@ describe('appointments', function (): void {
 
         deleteJson(url("/api/appointments/{$appointment->id}"))->assertNotFound();
 
-        assertDatabaseHas('appointments', ['id' => $appointment->id, 'deleted_at' => null]);
+        assertDatabaseHas(Appointment::class, ['id' => $appointment->id, 'deleted_at' => null]);
     });
 
     it('returns 404 when deleting a missing appointment', function (): void {

@@ -24,7 +24,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
             'ends_at'    => CarbonImmutable::parse('2026-06-01 11:00:00'),
         ]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-01 10:00:00'),
@@ -44,7 +44,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
             'ends_at'    => CarbonImmutable::parse('2026-06-01 11:00:00'),
         ]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-01 09:30:00'),
@@ -64,7 +64,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
             'ends_at'    => CarbonImmutable::parse('2026-06-01 11:00:00'),
         ]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-01 10:30:00'),
@@ -84,7 +84,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
             'ends_at'    => CarbonImmutable::parse('2026-06-01 11:00:00'),
         ]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-01 10:15:00'),
@@ -104,7 +104,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
             'ends_at'    => CarbonImmutable::parse('2026-06-01 11:00:00'),
         ]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-01 09:00:00'),
@@ -124,7 +124,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
             'ends_at'    => CarbonImmutable::parse('2026-06-01 11:00:00'),
         ]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-01 09:00:00'),
@@ -144,7 +144,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
             'ends_at'    => CarbonImmutable::parse('2026-06-01 11:00:00'),
         ]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-01 11:00:00'),
@@ -164,7 +164,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
             'ends_at'    => CarbonImmutable::parse('2026-06-01 11:00:00'),
         ]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-02 10:00:00'),
@@ -185,7 +185,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
         ]);
         $existing->update(['status' => AppointmentStatus::Cancelled]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-01 10:00:00'),
@@ -206,7 +206,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
         ]);
         $existing->delete();
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-01 10:00:00'),
@@ -226,7 +226,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
             'ends_at'    => CarbonImmutable::parse('2026-06-01 11:00:00'),
         ]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-01 10:00:00'),
@@ -253,7 +253,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
             'ends_at'    => CarbonImmutable::parse('2026-06-01 13:00:00'),
         ]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $doctor->id,
             CarbonImmutable::parse('2026-06-01 12:30:00'),
@@ -274,7 +274,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
             'ends_at'    => CarbonImmutable::parse('2026-06-01 11:00:00'),
         ]);
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Patient::class,
             $patient->id,
             CarbonImmutable::parse('2026-06-01 10:30:00'),
@@ -287,7 +287,7 @@ describe('CheckAppointmentOverlapAction', function (): void {
     it('returns false when no appointments exist for the given parent', function (): void {
         $unrelatedDoctor = DoctorFactory::new()->createOne();
 
-        $result = (new CheckAppointmentOverlapAction())->execute(
+        $result = new CheckAppointmentOverlapAction()->execute(
             Doctor::class,
             $unrelatedDoctor->id,
             CarbonImmutable::parse('2026-06-01 10:00:00'),

@@ -7,6 +7,7 @@ namespace Tests\Feature\Clinics;
 use Database\Factories\ClinicFactory;
 use Database\Factories\DoctorFactory;
 use Lightit\Clinics\App\Controllers\RemoveDoctorFromClinicController;
+use Lightit\Clinics\Domain\Models\ClinicDoctor;
 
 use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\deleteJson;
@@ -21,7 +22,7 @@ describe('clinics', function (): void {
         deleteJson(url("/api/clinics/{$clinic->id}/doctors/{$doctor->id}"))
             ->assertNoContent();
 
-        assertDatabaseMissing('clinic_doctor', [
+        assertDatabaseMissing(ClinicDoctor::class, [
             'clinic_id' => $clinic->id,
             'doctor_id' => $doctor->id,
         ]);

@@ -56,7 +56,7 @@ describe('patients', function (): void {
                 )
             );
 
-        assertDatabaseHas('patients', [
+        assertDatabaseHas(Patient::class, [
             'name'  => $payload['name'],
             'email' => $payload['email'],
         ]);
@@ -69,8 +69,8 @@ describe('patients', function (): void {
             'password' => 'Str0ng#Pass1',
         ])->assertCreated();
 
-        assertDatabaseHas('patients', ['email' => 'mixedcase@example.com']);
-        assertDatabaseMissing('patients', ['email' => 'MixedCase@Example.COM']);
+        assertDatabaseHas(Patient::class, ['email' => 'mixedcase@example.com']);
+        assertDatabaseMissing(Patient::class, ['email' => 'MixedCase@Example.COM']);
     });
 
     it('hashes the password on store', function (): void {
@@ -134,7 +134,7 @@ describe('patients', function (): void {
             ->assertUnprocessable()
             ->assertJsonValidationErrors([$field], 'error.fields');
 
-        assertDatabaseMissing('patients', ['email' => 'valid@example.com']);
+        assertDatabaseMissing(Patient::class, ['email' => 'valid@example.com']);
     })->with('store-patient-validation');
 
     it('accepts a name that is exactly 4 characters long', function (): void {
