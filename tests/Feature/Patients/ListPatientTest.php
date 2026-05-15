@@ -90,4 +90,28 @@ describe('patients', function (): void {
             ->assertJsonPath('data.1.name', 'Mellow Patient')
             ->assertJsonPath('data.2.name', 'Zeta Patient');
     });
+
+    it('sorts patients by name descending', function (): void {
+        PatientFactory::new()->createOne(['name' => 'Alpha Patient']);
+        PatientFactory::new()->createOne(['name' => 'Mellow Patient']);
+        PatientFactory::new()->createOne(['name' => 'Zeta Patient']);
+
+        getJson(url('/api/patients?sort=-name'))
+            ->assertOk()
+            ->assertJsonPath('data.0.name', 'Zeta Patient')
+            ->assertJsonPath('data.1.name', 'Mellow Patient')
+            ->assertJsonPath('data.2.name', 'Alpha Patient');
+    });
+
+    it('returns the second page with the remaining patients', function (): void {
+        PatientFactory::new()->count(16)->create();
+
+        getJson(url('/api/patients?page=2'))
+            ->assertOk()
+            ->assertJsonCount(1, 'data')
+            ->assertJsonPath('meta.current_page', 2)
+            ->assertJsonPath('meta.last_page', 2)
+            ->assertJsonPath('meta.total', 16)
+            ->assertJsonPath('meta.per_page', 15);
+    });
 });

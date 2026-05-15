@@ -40,4 +40,8 @@ describe('patients', function (): void {
     it('returns 404 when the patient does not exist', function (): void {
         getJson(url('/api/patients/99999'))->assertNotFound();
     });
+
+    it('returns 404 for a non-numeric patient id', function (): void {
+        getJson(url('/api/patients/not-a-number'))->assertNotFound();
+    });
 });

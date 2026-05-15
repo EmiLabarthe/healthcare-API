@@ -26,6 +26,10 @@ describe('patients', function (): void {
         deleteJson(url('/api/patients/99999'))->assertNotFound();
     });
 
+    it('returns 404 for a non-numeric patient id', function (): void {
+        deleteJson(url('/api/patients/not-a-number'))->assertNotFound();
+    });
+
     it('cascades to the patient appointments via the database FK', function (): void {
         $patient = PatientFactory::new()->createOne();
         $appointment = AppointmentFactory::new()->createOne(['patient_id' => $patient->id]);

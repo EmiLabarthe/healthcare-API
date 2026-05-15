@@ -111,6 +111,18 @@ describe('patients', function (): void {
             ->assertJsonValidationErrors(['email'], 'error.fields');
     });
 
+    it('rejects a duplicate email regardless of case', function (): void {
+        PatientFactory::new()->createOne(['email' => 'taken@example.com']);
+
+        postJson(url('/api/patients'), [
+            'name'     => 'Some Patient',
+            'email'    => 'TAKEN@EXAMPLE.COM',
+            'password' => 'Str0ng#Pass1',
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['email'], 'error.fields');
+    });
+
     it('rejects invalid payloads', function (string $field, string|array $value): void {
         $payload = [
             'name'     => 'Valid Name',
@@ -124,4 +136,22 @@ describe('patients', function (): void {
 
         assertDatabaseMissing('patients', ['email' => 'valid@example.com']);
     })->with('store-patient-validation');
+
+    it('accepts a name that is exactly 4 characters long', function (): void {
+        postJson(url('/api/patients'), [
+            'name'     => 'Anna',
+            'email'    => 'anna@example.com',
+            'password' => 'Str0ng#Pass1',
+        ])->assertCreated();
+    });
+
+    it('accepts a name that is exactly 80 characters long', function (): void {
+        $name = Str::repeat('a', 79) . 'z';
+
+        postJson(url('/api/patients'), [
+            'name'     => $name,
+            'email'    => 'longname@example.com',
+            'password' => 'Str0ng#Pass1',
+        ])->assertCreated();
+    });
 });

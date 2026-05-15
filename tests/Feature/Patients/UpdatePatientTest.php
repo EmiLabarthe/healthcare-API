@@ -110,6 +110,23 @@ describe('patients', function (): void {
         ]);
     });
 
+    it('allows keeping the same email when submitted with different casing', function (): void {
+        $patient = PatientFactory::new()->createOne([
+            'name'  => 'Case Keeper',
+            'email' => 'self@example.com',
+        ]);
+
+        patchJson(url("/api/patients/{$patient->id}"), [
+            'email' => 'SELF@EXAMPLE.COM',
+        ])->assertOk();
+
+        assertDatabaseHas('patients', [
+            'id'    => $patient->id,
+            'name'  => 'Case Keeper',
+            'email' => 'self@example.com',
+        ]);
+    });
+
     it('rejects an email already in use by a different patient', function (): void {
         PatientFactory::new()->createOne(['email' => 'occupied@example.com']);
         $patient = PatientFactory::new()->createOne(['email' => 'mine@example.com']);
@@ -121,6 +138,11 @@ describe('patients', function (): void {
 
     it('returns 404 when updating a missing patient', function (): void {
         patchJson(url('/api/patients/99999'), ['name' => 'Anything Goes'])
+            ->assertNotFound();
+    });
+
+    it('returns 404 for a non-numeric patient id', function (): void {
+        patchJson(url('/api/patients/not-a-number'), ['name' => 'Anything'])
             ->assertNotFound();
     });
 
