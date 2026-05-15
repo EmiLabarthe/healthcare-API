@@ -102,19 +102,6 @@ return [
         ],
 
     ],
-
-      /*
-    |--------------------------------------------------------------------------
-    | Serializable Classes
-    |--------------------------------------------------------------------------
-    |
-    | This option allows you to configure which classes are allowed to be
-    | serialized / unserialized via the cache. This is important for security
-    | purposes and is enforced when the "secure_serialization" option is enabled.
-    |
-    */
-
-    'serializable_classes' => [],
     
     /*
     |--------------------------------------------------------------------------

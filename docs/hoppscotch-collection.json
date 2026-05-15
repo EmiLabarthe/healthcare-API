@@ -1,0 +1,582 @@
+{
+  "v": 6,
+  "name": "Healthcare API",
+  "folders": [
+    {
+      "v": 6,
+      "name": "Auth",
+      "folders": [],
+      "requests": [
+        {
+          "v": "11",
+          "name": "Login",
+          "endpoint": "<<baseUrl>>/api/auth/login",
+          "method": "POST",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "// Capture token from response for use in <<token>>\nconst json = pw.response.body;\nif (json && json.data && json.data.access_token) {\n  pw.env.set(\"token\", json.data.access_token);\n}",
+          "auth": { "authType": "none", "authActive": true },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"email\": \"patient@example.com\",\n  \"password\": \"password\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Me",
+          "endpoint": "<<baseUrl>>/api/auth/me",
+          "method": "GET",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Refresh",
+          "endpoint": "<<baseUrl>>/api/auth/refresh",
+          "method": "POST",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Logout",
+          "endpoint": "<<baseUrl>>/api/auth/logout",
+          "method": "POST",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [],
+          "responses": {}
+        }
+      ],
+      "auth": { "authType": "bearer", "authActive": true, "token": "<<token>>" },
+      "headers": []
+    },
+    {
+      "v": 6,
+      "name": "Appointments",
+      "folders": [],
+      "requests": [
+        {
+          "v": "11",
+          "name": "List appointments",
+          "endpoint": "<<baseUrl>>/api/appointments",
+          "method": "GET",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Store appointment",
+          "endpoint": "<<baseUrl>>/api/appointments",
+          "method": "POST",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"doctor_id\": 1,\n  \"clinic_id\": 1,\n  \"starts_at\": \"2026-06-01T10:00:00Z\",\n  \"ends_at\": \"2026-06-01T10:30:00Z\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Get appointment",
+          "endpoint": "<<baseUrl>>/api/appointments/:appointment",
+          "method": "GET",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "appointment", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Update appointment",
+          "endpoint": "<<baseUrl>>/api/appointments/:appointment",
+          "method": "PATCH",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"doctor_id\": 1,\n  \"starts_at\": \"2026-06-01T11:00:00Z\",\n  \"ends_at\": \"2026-06-01T11:30:00Z\"\n}"
+          },
+          "requestVariables": [
+            { "key": "appointment", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Delete appointment",
+          "endpoint": "<<baseUrl>>/api/appointments/:appointment",
+          "method": "DELETE",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "appointment", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Cancel appointment",
+          "endpoint": "<<baseUrl>>/api/appointments/:appointment/cancel",
+          "method": "POST",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "appointment", "value": "1", "active": true }
+          ],
+          "responses": {}
+        }
+      ],
+      "auth": { "authType": "bearer", "authActive": true, "token": "<<token>>" },
+      "headers": []
+    },
+    {
+      "v": 6,
+      "name": "Patients",
+      "folders": [],
+      "requests": [
+        {
+          "v": "11",
+          "name": "List patients",
+          "endpoint": "<<baseUrl>>/api/patients",
+          "method": "GET",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Store patient",
+          "endpoint": "<<baseUrl>>/api/patients",
+          "method": "POST",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"password\": \"Password123!\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Get patient",
+          "endpoint": "<<baseUrl>>/api/patients/:patient",
+          "method": "GET",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "patient", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Update patient",
+          "endpoint": "<<baseUrl>>/api/patients/:patient",
+          "method": "PATCH",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Jane D. Updated\",\n  \"email\": \"jane.updated@example.com\"\n}"
+          },
+          "requestVariables": [
+            { "key": "patient", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Delete patient",
+          "endpoint": "<<baseUrl>>/api/patients/:patient",
+          "method": "DELETE",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "patient", "value": "1", "active": true }
+          ],
+          "responses": {}
+        }
+      ],
+      "auth": { "authType": "inherit", "authActive": true },
+      "headers": []
+    },
+    {
+      "v": 6,
+      "name": "Clinics",
+      "folders": [],
+      "requests": [
+        {
+          "v": "11",
+          "name": "List clinics",
+          "endpoint": "<<baseUrl>>/api/clinics",
+          "method": "GET",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Store clinic",
+          "endpoint": "<<baseUrl>>/api/clinics",
+          "method": "POST",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Central Clinic\",\n  \"address\": \"123 Main St, Springfield\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Get clinic",
+          "endpoint": "<<baseUrl>>/api/clinics/:clinic",
+          "method": "GET",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "clinic", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Update clinic",
+          "endpoint": "<<baseUrl>>/api/clinics/:clinic",
+          "method": "PATCH",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Central Clinic - West\",\n  \"address\": \"456 Oak Ave, Springfield\"\n}"
+          },
+          "requestVariables": [
+            { "key": "clinic", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Delete clinic",
+          "endpoint": "<<baseUrl>>/api/clinics/:clinic",
+          "method": "DELETE",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "clinic", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Assign doctor to clinic",
+          "endpoint": "<<baseUrl>>/api/clinics/:clinic/doctors/:doctor",
+          "method": "POST",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "clinic", "value": "1", "active": true },
+            { "key": "doctor", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Remove doctor from clinic",
+          "endpoint": "<<baseUrl>>/api/clinics/:clinic/doctors/:doctor",
+          "method": "DELETE",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "clinic", "value": "1", "active": true },
+            { "key": "doctor", "value": "1", "active": true }
+          ],
+          "responses": {}
+        }
+      ],
+      "auth": { "authType": "inherit", "authActive": true },
+      "headers": []
+    },
+    {
+      "v": 6,
+      "name": "Doctors",
+      "folders": [],
+      "requests": [
+        {
+          "v": "11",
+          "name": "List doctors",
+          "endpoint": "<<baseUrl>>/api/doctors",
+          "method": "GET",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Store doctor",
+          "endpoint": "<<baseUrl>>/api/doctors",
+          "method": "POST",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Dr. House\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Get doctor",
+          "endpoint": "<<baseUrl>>/api/doctors/:doctor",
+          "method": "GET",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "doctor", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Update doctor",
+          "endpoint": "<<baseUrl>>/api/doctors/:doctor",
+          "method": "PATCH",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"Dr. Gregory House\"\n}"
+          },
+          "requestVariables": [
+            { "key": "doctor", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Delete doctor",
+          "endpoint": "<<baseUrl>>/api/doctors/:doctor",
+          "method": "DELETE",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "doctor", "value": "1", "active": true }
+          ],
+          "responses": {}
+        }
+      ],
+      "auth": { "authType": "inherit", "authActive": true },
+      "headers": []
+    },
+    {
+      "v": 6,
+      "name": "Users",
+      "folders": [],
+      "requests": [
+        {
+          "v": "11",
+          "name": "List users",
+          "endpoint": "<<baseUrl>>/api/users",
+          "method": "GET",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Store user",
+          "endpoint": "<<baseUrl>>/api/users",
+          "method": "POST",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"John Admin\",\n  \"email_address\": \"john.admin@example.com\",\n  \"password\": \"Password123!\",\n  \"password_confirmation\": \"Password123!\"\n}"
+          },
+          "requestVariables": [],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Get user",
+          "endpoint": "<<baseUrl>>/api/users/:user",
+          "method": "GET",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "user", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Update user",
+          "endpoint": "<<baseUrl>>/api/users/:user",
+          "method": "PATCH",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"name\": \"John A. Admin\",\n  \"email_address\": \"john.a.admin@example.com\"\n}"
+          },
+          "requestVariables": [
+            { "key": "user", "value": "1", "active": true }
+          ],
+          "responses": {}
+        },
+        {
+          "v": "11",
+          "name": "Delete user",
+          "endpoint": "<<baseUrl>>/api/users/:user",
+          "method": "DELETE",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": { "authType": "inherit", "authActive": true },
+          "body": { "contentType": null, "body": null },
+          "requestVariables": [
+            { "key": "user", "value": "1", "active": true }
+          ],
+          "responses": {}
+        }
+      ],
+      "auth": { "authType": "inherit", "authActive": true },
+      "headers": []
+    }
+  ],
+  "requests": [],
+  "auth": { "authType": "none", "authActive": true },
+  "headers": []
+}

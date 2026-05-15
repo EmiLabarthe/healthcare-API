@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
-use Illuminate\Container\Attributes\CurrentUser;
 use Illuminate\Support\Facades\Route;
+use Lightit\Authentication\App\Controllers\LoginController;
+use Lightit\Authentication\App\Controllers\LogoutController;
+use Lightit\Authentication\App\Controllers\MeController;
+use Lightit\Authentication\App\Controllers\RefreshController;
 use Lightit\Appointments\App\Controllers\CancelAppointmentController;
 use Lightit\Appointments\App\Controllers\DeleteAppointmentController;
 use Lightit\Appointments\App\Controllers\GetAppointmentController;
@@ -44,12 +47,15 @@ use Lightit\Users\App\Controllers\UpdateUserController;
 |
 */
 
-Route::middleware('auth:sanctum')
-    ->get('/me', fn(
-        #[CurrentUser] $user
-    ) => response()->json([
-        'data' => $user,
-    ]));
+Route::prefix('auth')->group(static function (): void {
+    Route::post('/login', LoginController::class);
+
+    Route::middleware('auth:api')->group(static function (): void {
+        Route::post('/logout', LogoutController::class);
+        Route::post('/refresh', RefreshController::class);
+        Route::get('/me', MeController::class);
+    });
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +68,7 @@ Route::middleware('auth:sanctum')
 |--------------------------------------------------------------------------
 */
 Route::prefix('appointments')
+    ->middleware('auth:api')
     ->group(static function (): void {
         Route::get('/', ListAppointmentController::class);
         Route::post('/', StoreAppointmentController::class);

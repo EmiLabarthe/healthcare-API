@@ -18,11 +18,11 @@ use Lightit\Clinics\Domain\Models\ClinicDoctor;
  * @property string          $name
  * @property CarbonImmutable $created_at
  * @property CarbonImmutable $updated_at
+ * @property-read Collection<int, Appointment> $appointments
+ * @property-read int|null $appointments_count
  * @property-read ClinicDoctor|null $pivot
  * @property-read Collection<int, Clinic> $clinics
  * @property-read int|null $clinics_count
- * @property-read Collection<int, Appointment> $appointments
- * @property-read int|null $appointments_count
  *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Doctor newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Doctor newQuery()

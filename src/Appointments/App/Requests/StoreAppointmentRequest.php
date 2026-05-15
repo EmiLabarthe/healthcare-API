@@ -23,22 +23,17 @@ class StoreAppointmentRequest extends FormRequest
 
     public const string DOCTOR_ID = 'doctor_id';
 
-    public const string PATIENT_ID = 'patient_id';
-
     public const string CLINIC_ID = 'clinic_id';
 
     public const string STARTS_AT = 'starts_at';
 
     public const string ENDS_AT = 'ends_at';
 
-    /**
-     * @return array<string, mixed>
-     */
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
             self::DOCTOR_ID => ['required', 'integer', Rule::exists(Doctor::class, 'id')],
-            self::PATIENT_ID => ['required', 'integer', Rule::exists(Patient::class, 'id')],
             self::CLINIC_ID => [
                 'required',
                 'integer',
@@ -66,7 +61,9 @@ class StoreAppointmentRequest extends FormRequest
             $startsAt = CarbonImmutable::parse($this->string(self::STARTS_AT)->toString());
             $endsAt = CarbonImmutable::parse($this->string(self::ENDS_AT)->toString());
             $doctorId = $this->integer(self::DOCTOR_ID);
-            $patientId = $this->integer(self::PATIENT_ID);
+            /** @var Patient $patient */
+            $patient = $this->user();
+            $patientId = $patient->id;
 
             if ($this->checkOverlap->execute(Doctor::class, $doctorId, $startsAt, $endsAt)) {
                 $validator->errors()->add(
@@ -84,11 +81,11 @@ class StoreAppointmentRequest extends FormRequest
         });
     }
 
-    public function toDto(): StoreAppointmentDto
+    public function toDto(Patient $patient): StoreAppointmentDto
     {
         return new StoreAppointmentDto(
             doctorId: $this->integer(self::DOCTOR_ID),
-            patientId: $this->integer(self::PATIENT_ID),
+            patientId: $patient->id,
             clinicId: $this->integer(self::CLINIC_ID),
             startsAt: CarbonImmutable::parse($this->string(self::STARTS_AT)->toString()),
             endsAt: CarbonImmutable::parse($this->string(self::ENDS_AT)->toString()),
