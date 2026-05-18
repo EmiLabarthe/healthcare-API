@@ -16,6 +16,13 @@ class UpdatePatientRequest extends FormRequest
 
     public const string EMAIL = 'email';
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has(self::EMAIL)) {
+            $this->merge([self::EMAIL => $this->string(self::EMAIL)->lower()->toString()]);
+        }
+    }
+
     /**
      * @return array<string, mixed>
      */

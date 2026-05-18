@@ -19,6 +19,13 @@ class StorePatientRequest extends FormRequest
 
     public const string PASSWORD = 'password';
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has(self::EMAIL)) {
+            $this->merge([self::EMAIL => $this->string(self::EMAIL)->lower()->toString()]);
+        }
+    }
+
     /** @return array<string, mixed> */
     public function rules(): array
     {
