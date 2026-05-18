@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Feature\Patients;
 
 use Database\Factories\PatientFactory;
-use Illuminate\Testing\Fluent\AssertableJson;
 use Lightit\Patients\App\Controllers\GetPatientController;
 use Lightit\Patients\App\Resources\PatientResource;
 
@@ -18,14 +17,7 @@ describe('patients', function (): void {
 
         getJson(url("/api/patients/{$patient->id}"))
             ->assertOk()
-            ->assertJson(
-                fn (AssertableJson $json): AssertableJson => $json->has(
-                    'data',
-                    fn (AssertableJson $json): AssertableJson => $json->whereAll(
-                        PatientResource::make($patient)->resolve()
-                    )
-                )
-            );
+            ->assertJsonPath('data', PatientResource::make($patient)->response()->getData(true)['data']);
     });
 
     it('does not expose password or remember_token', function (): void {
