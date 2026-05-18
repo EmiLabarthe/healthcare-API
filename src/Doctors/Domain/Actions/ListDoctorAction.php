@@ -19,6 +19,7 @@ class ListDoctorAction
             ->allowedFilters(['name'])
             ->allowedSorts('name')
             ->orderBy('id', 'desc')
+            ->with('clinics')
             ->paginate();
     }
 }

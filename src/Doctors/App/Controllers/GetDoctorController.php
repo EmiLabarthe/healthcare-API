@@ -20,7 +20,7 @@ final readonly class GetDoctorController
     )]
     public function __invoke(Doctor $doctor): JsonResponse
     {
-        return DoctorResource::make($doctor)
+        return DoctorResource::make($doctor->load('clinics'))
             ->response();
     }
 }
