@@ -17,7 +17,7 @@ describe('patients', function (): void {
 
         getJson(url("/api/patients/{$patient->id}"))
             ->assertOk()
-            ->assertJsonPath('data', PatientResource::make($patient)->response()->getData(true)['data']);
+            ->assertJsonPath('data', PatientResource::make($patient)->resolve());
     });
 
     it('does not expose password or remember_token', function (): void {
