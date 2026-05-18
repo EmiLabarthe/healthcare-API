@@ -34,6 +34,7 @@ describe('clinics', function (): void {
         $response = postJson(url('/api/clinics'), $payload);
 
         $clinic = Clinic::query()->where('name', $payload['name'])->firstOrFail();
+        $clinic->loadCount('doctors');
 
         $response
             ->assertCreated()

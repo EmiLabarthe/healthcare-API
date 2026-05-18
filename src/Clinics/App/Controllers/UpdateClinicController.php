@@ -23,6 +23,7 @@ final readonly class UpdateClinicController
     public function __invoke(Clinic $clinic, UpdateClinicRequest $request, UpdateClinicAction $action): JsonResponse
     {
         $clinic = $action->execute($clinic, $request->toDto());
+        $clinic->loadCount('doctors');
 
         return ClinicResource::make($clinic)
             ->response();

@@ -20,7 +20,7 @@ describe('clinics', function (): void {
             ->assertJsonPath('meta.total', 5)
             ->assertJsonStructure([
                 'data' => [
-                    '*' => ['id', 'name', 'address'],
+                    '*' => ['id', 'name', 'address', 'doctors_count'],
                 ],
                 'meta' => ['current_page', 'last_page', 'per_page', 'total'],
             ]);
