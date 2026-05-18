@@ -21,8 +21,12 @@ final readonly class StoreAppointmentController
         title: 'Create an appointment',
         description: 'Schedules a new appointment for a doctor and patient at a clinic.'
     )]
-    public function __invoke(StoreAppointmentRequest $request, StoreAppointmentAction $action, #[CurrentUser] Patient $patient): JsonResponse
-    {
+    public function __invoke(
+        StoreAppointmentRequest $request,
+        StoreAppointmentAction $action,
+        #[CurrentUser]
+        Patient $patient,
+    ): JsonResponse {
         $appointment = $action->execute($request->toDto($patient));
 
         return AppointmentResource::make($appointment)
