@@ -22,6 +22,7 @@ final readonly class StoreClinicController
     public function __invoke(StoreClinicRequest $request, StoreClinicAction $action): JsonResponse
     {
         $clinic = $action->execute($request->toDto());
+        $clinic->loadCount('doctors');
 
         return ClinicResource::make($clinic)
             ->response()

@@ -30,6 +30,7 @@ describe('clinics', function (): void {
         $response = patchJson(url("/api/clinics/{$clinic->id}"), $payload);
 
         $clinic->refresh();
+        $clinic->loadCount('doctors');
 
         $response
             ->assertOk()
