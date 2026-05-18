@@ -7,6 +7,7 @@ namespace Lightit\Doctors\App\Resources;
 use Dedoc\Scramble\Attributes\SchemaName;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Lightit\Clinics\App\Resources\ClinicResource;
 use Lightit\Doctors\Domain\Models\Doctor;
 
 /**
@@ -20,6 +21,7 @@ class DoctorResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'clinics' => ClinicResource::collection($this->whenLoaded('clinics')),
         ];
     }
 }
