@@ -67,10 +67,15 @@ Route::prefix('auth')->group(static function (): void {
 | Appointments Routes
 |--------------------------------------------------------------------------
 */
+Route::prefix('me')
+    ->middleware('auth:api')
+    ->group(static function (): void {
+        Route::get('/appointments', ListAppointmentController::class);
+    });
+
 Route::prefix('appointments')
     ->middleware('auth:api')
     ->group(static function (): void {
-        Route::get('/', ListAppointmentController::class);
         Route::post('/', StoreAppointmentController::class);
         Route::prefix('{appointment}')->group(static function (): void {
             Route::get('/', GetAppointmentController::class);

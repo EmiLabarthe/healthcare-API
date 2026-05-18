@@ -27,7 +27,7 @@ describe('appointments', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
-        getJson(url('/api/appointments'))
+        getJson(url('/api/me/appointments'))
             ->assertOk()
             ->assertJsonCount(3, 'data')
             ->assertJsonPath('meta.total', 3)
@@ -46,7 +46,7 @@ describe('appointments', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
-        getJson(url('/api/appointments'))
+        getJson(url('/api/me/appointments'))
             ->assertOk()
             ->assertJsonCount(0, 'data');
     });
@@ -72,7 +72,7 @@ describe('appointments', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
-        getJson(url('/api/appointments'))
+        getJson(url('/api/me/appointments'))
             ->assertOk()
             ->assertJsonPath('data.0.id', $late->id)
             ->assertJsonPath('data.1.id', $middle->id)
@@ -90,7 +90,7 @@ describe('appointments', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
-        getJson(url("/api/appointments?filter[doctor_id]={$targetDoctor->id}"))
+        getJson(url("/api/me/appointments?filter[doctor_id]={$targetDoctor->id}"))
             ->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.doctor_id', $targetDoctor->id);
@@ -107,7 +107,7 @@ describe('appointments', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
-        getJson(url("/api/appointments?filter[clinic_id]={$targetClinic->id}"))
+        getJson(url("/api/me/appointments?filter[clinic_id]={$targetClinic->id}"))
             ->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.clinic_id', $targetClinic->id);
@@ -122,7 +122,7 @@ describe('appointments', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
-        getJson(url('/api/appointments?filter[status]=cancelled'))
+        getJson(url('/api/me/appointments?filter[status]=cancelled'))
             ->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.status', AppointmentStatus::Cancelled->value);
@@ -144,7 +144,7 @@ describe('appointments', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
-        getJson(url('/api/appointments?sort=starts_at'))
+        getJson(url('/api/me/appointments?sort=starts_at'))
             ->assertOk()
             ->assertJsonPath('data.0.id', $first->id)
             ->assertJsonPath('data.1.id', $second->id);
@@ -166,7 +166,7 @@ describe('appointments', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
-        getJson(url('/api/appointments?sort=-ends_at'))
+        getJson(url('/api/me/appointments?sort=-ends_at'))
             ->assertOk()
             ->assertJsonPath('data.0.id', $second->id)
             ->assertJsonPath('data.1.id', $first->id);
@@ -181,12 +181,12 @@ describe('appointments', function (): void {
         /** @var TestCase $this */
         $this->actingAs($patient, 'api');
 
-        getJson(url('/api/appointments'))
+        getJson(url('/api/me/appointments'))
             ->assertOk()
             ->assertJsonCount(2, 'data');
     });
 
     it('returns 401 when unauthenticated', function (): void {
-        getJson(url('/api/appointments'))->assertUnauthorized();
+        getJson(url('/api/me/appointments'))->assertUnauthorized();
     });
 });
